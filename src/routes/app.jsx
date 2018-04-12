@@ -1,22 +1,24 @@
 import Dashboard from 'views/Dashboard/Dashboard';
-import UserProfile from 'views/UserProfile/UserProfile';
-import TableList from 'views/TableList/TableList';
-import Typography from 'views/Typography/Typography';
-import Icons from 'views/Icons/Icons';
-import Maps from 'views/Maps/Maps';
+import Projects from 'views/Projects/Projects';
+import Groups from 'views/Groups/Groups';
+import Messages from 'views/Messages/Messages';
 import Notifications from 'views/Notifications/Notifications';
-import Upgrade from 'views/Upgrade/Upgrade';
+import LabelMe from 'views/LabelMe/LabelMe'
+import Account from 'views/Account/Account';
+import LogOut from 'views/LogOut/LogOut';
 
 const appRoutes = [
-    { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
-    { path: "/user", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
-    { path: "/table", name: "Table List", icon: "pe-7s-note2", component: TableList },
-    { path: "/typography", name: "Typography", icon: "pe-7s-news-paper", component: Typography },
-    { path: "/icons", name: "Icons", icon: "pe-7s-science", component: Icons },
-    { path: "/maps", name: "Maps", icon: "pe-7s-map-marker", component: Maps },
+    { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph1", component: Dashboard },
+    { path: "/projects", name: "Projects", icon: "pe-7s-note2", component: Projects },
+    { path: "/groups", name: "Groups", icon: "pe-7s-users", component: Groups },
+    { path: "/messages", name: "Messages", icon: "pe-7s-comment", component: Messages },
     { path: "/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },
-    { upgrade: true, path: "/upgrade", name: "Upgrade to PRO", icon: "pe-7s-rocket", component: Upgrade },
-    { redirect: true, path:"/", to:"/dashboard", name: "Dashboard" }
+    { path: "/labelme", name: "LabelMe", icon: "pe-7s-pen", component: LabelMe },
+    { path: "/account", name: "Account", icon: "pe-7s-user", component: Account },
+    { path: "/logout", name: "Log Out", icon: "pe-7s-left-arrow", component: LogOut },
+    { redirect: true, path: "/", to: "/dashboard", name: "Dashboard" },
+    
 ];
+
 
 export default appRoutes;
