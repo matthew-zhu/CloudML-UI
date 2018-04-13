@@ -250,14 +250,13 @@ var style = {
 // // // For tables
 // //
 //
-const thArray = ["ID","Name","Salary","Country","City"];
+const thArray = ["ID","Name","Group","Images","Annotations"];
 const tdArray = [
-    [ "1" , "Dakota Rice" , "$36,738" , "Niger" , "Oud-Turnhout" ] ,
-    [ "2" , "Minerva Hooper" , "$23,789" , "Curaçao" , "Sinaai-Waas" ] ,
-    [ "3" , "Sage Rodriguez" , "$56,142" , "Netherlands" , "Baileux" ] ,
-    [ "4" , "Philip Chaney" , "$38,735" , "Korea, South" , "Overland Park" ] ,
-    [ "5" , "Doris Greene" , "$63,542" , "Malawi" , "Feldkirchen in Kärnten" ] ,
-    [ "6" , "Mason Porter" , "$78,615" , "Chile" , "Gloucester" ]
+    [ "1" , "05june05_static_indoor" , "N/A" , "5" , "741" ] ,
+    [ "2" , "05june05_static_street_boston " , "N/A" , "185" , "9614" ] ,
+    [ "3" , "country_static_132pumpkins " , "N/A" , "84" , "3513" ] ,
+    [ "4" , "paris_static_street " , "N/A" , "44" , "1020" ] ,
+    [ "5" , "seq_feb24_outdoors2 " , "N/A" , "2740" , "22194" ] ,
 ];
 
 
