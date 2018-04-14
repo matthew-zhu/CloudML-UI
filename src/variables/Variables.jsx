@@ -250,14 +250,22 @@ var style = {
 // // // For tables
 // //
 //
-const thArray = ["ID","Name","Group","Images","Annotations"];
-const tdArray = [
-    [ "1" , "05june05_static_indoor" , "N/A" , "5" , "741" ] ,
-    [ "2" , "05june05_static_street_boston " , "N/A" , "185" , "9614" ] ,
-    [ "3" , "country_static_132pumpkins " , "N/A" , "84" , "3513" ] ,
-    [ "4" , "paris_static_street " , "N/A" , "44" , "1020" ] ,
-    [ "5" , "seq_feb24_outdoors2 " , "N/A" , "2740" , "22194" ] ,
+const projAttributes = ["ID","Name","Group","Images","Annotations"];
+const projData = [
+    [ "1" , "05june05_static_indoor" , "SJSU" , "5" , "741" ] ,
+    [ "2" , "05june05_static_street_boston " , "MIT" , "185" , "9614" ] ,
+    [ "3" , "country_static_132pumpkins " , "UCLA" , "84" , "3513" ] ,
+    [ "4" , "paris_static_street " , "Stanford" , "44" , "1020" ] ,
+    [ "5" , "seq_feb24_outdoors2 " , "SJSU" , "2740" , "22194" ] ,
 ];
+
+const groupAttributes = ["ID", "Name", "Owner", "Members","Projects"];
+const groupData = [
+    [ "1" , "SJSU" , "John Adams" , "22" , "2" ] ,
+    [ "2" , "MIT" , "Megan Bell" , "3" , "1" ] ,
+    [ "3" , "UCLA" , "Jane Doe" , "12" , "1" ] ,
+    [ "4" , "Stanford" , "Andrew Campbell" , "11" , "1" ] ,
+]
 
 
 //
@@ -556,7 +564,7 @@ var legendBar = {
 
 module.exports = {
     style, // For notifications (App container and Notifications view)
-    thArray, tdArray, // For tables (TableList view)
+    projAttributes, projData, groupAttributes, groupData,// For tables (TableList view)
     iconsArray, // For icons (Icons view)
     dataPie, legendPie, dataSales, optionsSales, responsiveSales, legendSales, dataBar, optionsBar, responsiveBar, legendBar // For charts (Dashboard view)
 };

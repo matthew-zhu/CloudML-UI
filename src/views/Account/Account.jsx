@@ -115,7 +115,6 @@ class Account extends Component {
                                 }
                             />
                         </Col>
-
                     </Row>
                 </Grid>>
             </div>
