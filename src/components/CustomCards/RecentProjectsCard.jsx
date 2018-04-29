@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
 import { Card } from 'components/Card/Card.jsx';
 import Button from 'elements/CustomButton/CustomButton';
 
-import { projAttributes, projData } from "variables/Variables.jsx";
+import { projData } from "variables/Variables.jsx";
 
 class HorizontalRecentProjectsCard extends Component {
     render() {

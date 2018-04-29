@@ -12,9 +12,9 @@ import HomeSidebar from 'components/Sidebar/HomeSidebar';
 import { homeRoutes } from 'routes/app.jsx';
 
 class Home extends Component {
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
     render() {
         return (
 

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
 import {Card} from 'components/Card/Card.jsx';
 import Button from 'elements/CustomButton/CustomButton';
 
-import { groupAttributes, groupData } from "variables/Variables.jsx";
+import { groupData } from "variables/Variables.jsx";
 
 class HorizontalRecentGroupsCard extends Component {
     render() {

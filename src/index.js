@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import App from 'containers/App/App.jsx';
-import Home from 'containers/Home/Home.jsx';
+// import Home from 'containers/Home/Home.jsx';
 
 import './assets/css/bootstrap.min.css';
 import './assets/css/animate.min.css';

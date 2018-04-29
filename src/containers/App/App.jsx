@@ -9,12 +9,12 @@ import Header from 'components/Header/Header';
 import Footer from 'components/Footer/Footer';
 import Sidebar from 'components/Sidebar/Sidebar';
 
-import { appRoutes, homeRoutes } from 'routes/app.jsx';
+import { appRoutes } from 'routes/app.jsx';
 
 class App extends Component {
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
 
     render() {
         return (

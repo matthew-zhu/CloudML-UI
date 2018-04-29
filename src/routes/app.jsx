@@ -6,8 +6,8 @@ import Notifications from 'views/Notifications/Notifications';
 import LabelMe from 'views/LabelMe/LabelMe'
 import Account from 'views/Account/Account';
 import LogOut from 'views/LogOut/LogOut';
-import Homepage from 'views/Home/Homepage';
-import Login from 'views/Home/Login';
+// import Homepage from 'views/Home/Homepage';
+// import Login from 'views/Home/Login';
 
 const appRoutes = [
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph1", component: Dashboard },

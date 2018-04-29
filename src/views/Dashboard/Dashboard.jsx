@@ -3,7 +3,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import { VerticalRecentProjectsCard } from 'components/CustomCards/RecentProjectsCard';
 import { VerticalRecentGroupsCard } from 'components/CustomCards/RecentGroupsCard';
-import { NotificationsCard } from 'components/CustomCards/NotificationsCard';
+// import { NotificationsCard } from 'components/CustomCards/NotificationsCard';
 import { UserCard } from 'components/UserCard/UserCard.jsx';
 
 import Button from 'elements/CustomButton/CustomButton';

@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+// import { Grid, Row, Col } from 'react-bootstrap';
 
-var firebase = require("firebase");
-var firebaseui = require('firebaseui');
+// var firebase = require("firebase");
+// var firebaseui = require('firebaseui');
 
 // Initialize Firebase
 // TODO: Replace with your project's customized code snippet
-var config = {
-    apiKey: "AIzaSyD70XLq0XkOTOVUiIJsnPyrUzXrn0f1s3k",
-    authDomain: "cloudml-202000.firebaseapp.com",
-    databaseURL: "https://cloudml-202000.firebaseio.com",
-    storageBucket: "cloudml-202000.appspot.com",
-};
-firebase.initializeApp(config);
+// var config = {
+//     apiKey: "AIzaSyD70XLq0XkOTOVUiIJsnPyrUzXrn0f1s3k",
+//     authDomain: "cloudml-202000.firebaseapp.com",
+//     databaseURL: "https://cloudml-202000.firebaseio.com",
+//     storageBucket: "cloudml-202000.appspot.com",
+// };
+// firebase.initializeApp(config);
 
 class Homepage extends Component {
     render() {

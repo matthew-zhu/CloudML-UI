@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import { Button, FormGroup, FormControl, ControlLabel, Row, Col, Image, Grid } from 'react-bootstrap';
+import { Button, FormGroup, FormControl, ControlLabel, Row, Col, Grid } from 'react-bootstrap';
 
 import {
     Route,
-    Switch,
-    Redirect
+    // Switch,
+    // Redirect
 } from 'react-router-dom';
 
 import Dashboard from 'views/Dashboard/Dashboard';
 
-import logo from 'assets/img/reactlogo.png';
-import loginbg from 'assets/img/loginbackground.jpg';
+// import logo from 'assets/img/reactlogo.png';
+// import loginbg from 'assets/img/loginbackground.jpg';
 
 import {Card} from 'components/Card/Card.jsx';
-import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
+// import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
 
 // var firebase = require("firebase");
 // var firebaseui = require('firebaseui');

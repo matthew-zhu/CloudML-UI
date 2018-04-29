@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col, Alert } from "react-bootstrap";
+import { Row, Col, Alert } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
 import {Card} from 'components/Card/Card.jsx';
-import Button from 'elements/CustomButton/CustomButton';
+// import Button from 'elements/CustomButton/CustomButton';
 
 class NotificationsCard extends Component {
     render() {

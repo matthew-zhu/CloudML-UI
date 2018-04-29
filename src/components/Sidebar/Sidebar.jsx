@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-import { NavItem } from 'react-bootstrap';
+// import { NavItem } from 'react-bootstrap';
 
 import HeaderLinks from '../Header/HeaderLinks.jsx';
 
@@ -34,13 +34,13 @@ class Sidebar extends Component{
             <div id="sidebar" className="sidebar" data-color="black" data-image={imagine}>
                 <div className="sidebar-background" style={sidebarBackground}></div>
                     <div className="logo">
-                        <a href="#" className="simple-text logo-mini">
+                        <a href="/" className="simple-text logo-mini">
                             <div className="logo-img">
                                 <img src={logo} alt="logo_image"/>
                             </div>
 
                         </a>
-                        <a href="#" className="simple-text logo-normal">
+                        <a href="/" className="simple-text logo-normal">
                             LabelMe
                         </a>
                     </div>

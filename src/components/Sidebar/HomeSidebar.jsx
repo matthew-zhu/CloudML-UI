@@ -7,7 +7,7 @@ import HeaderLinks from '../Header/HeaderLinks.jsx';
 import imagine from 'assets/img/sidebar-4.jpg';
 import logo from 'assets/img/reactlogo.png';
 
-import { homeRoutes } from 'routes/app.jsx';
+// import { homeRoutes } from 'routes/app.jsx';
 
 class HomeSidebar extends Component{
     constructor(props){
@@ -34,13 +34,13 @@ class HomeSidebar extends Component{
             <div id="sidebar" className="sidebar" data-color="black" data-image={imagine}>
                 <div className="sidebar-background" style={sidebarBackground}></div>
                     <div className="logo">
-                        <a href="#" className="simple-text logo-mini">
+                        <a href="/" className="simple-text logo-mini">
                             <div className="logo-img">
                                 <img src={logo} alt="logo_image"/>
                             </div>
 
                         </a>
-                        <a href="#" className="simple-text logo-normal">
+                        <a href="/" className="simple-text logo-normal">
                             LabelMe
                         </a>
                     </div>
