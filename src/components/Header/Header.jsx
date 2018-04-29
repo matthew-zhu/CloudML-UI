@@ -3,7 +3,7 @@ import { Navbar } from 'react-bootstrap';
 
 import HeaderLinks from './HeaderLinks.jsx';
 
-import appRoutes from 'routes/app.jsx';
+import { appRoutes } from 'routes/app.jsx';
 
 class Header extends Component{
     constructor(props){

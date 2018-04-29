@@ -9,7 +9,6 @@ import {
 
 import App from 'containers/App/App.jsx';
 import Home from 'containers/Home/Home.jsx';
-import Login from 'containers/Login/Login.jsx';
 
 import './assets/css/bootstrap.min.css';
 import './assets/css/animate.min.css';

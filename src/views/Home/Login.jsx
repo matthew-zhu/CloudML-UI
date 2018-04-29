@@ -15,6 +15,19 @@ import loginbg from 'assets/img/loginbackground.jpg';
 import {Card} from 'components/Card/Card.jsx';
 import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
 
+// var firebase = require("firebase");
+// var firebaseui = require('firebaseui');
+
+// // Initialize Firebase
+// // TODO: Replace with your project's customized code snippet
+// var config = {
+//     apiKey: "AIzaSyD70XLq0XkOTOVUiIJsnPyrUzXrn0f1s3k",
+//     authDomain: "cloudml-202000.firebaseapp.com",
+//     databaseURL: "https://cloudml-202000.firebaseio.com",
+//     storageBucket: "cloudml-202000.appspot.com",
+// };
+// firebase.initializeApp(config);
+
 
 class Login extends Component {
     constructor(props) {

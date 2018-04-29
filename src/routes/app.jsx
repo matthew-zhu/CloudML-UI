@@ -6,6 +6,8 @@ import Notifications from 'views/Notifications/Notifications';
 import LabelMe from 'views/LabelMe/LabelMe'
 import Account from 'views/Account/Account';
 import LogOut from 'views/LogOut/LogOut';
+import Homepage from 'views/Home/Homepage';
+import Login from 'views/Home/Login';
 
 const appRoutes = [
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph1", component: Dashboard },
@@ -21,4 +23,13 @@ const appRoutes = [
 ];
 
 
-export default appRoutes;
+const homeRoutes = [
+    // { path: "/homepage", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
+    // { path: "/login", name: "Login", icon: "pe-7s-note2", component: Login },
+    // { redirect: true, path: "/", to: "/homepage", name: "Homepage" },
+
+    
+];
+
+
+export { appRoutes, homeRoutes};

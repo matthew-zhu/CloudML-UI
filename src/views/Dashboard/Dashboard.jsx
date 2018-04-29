@@ -15,11 +15,11 @@ class Dashboard extends Component {
         return (
             <div className="content">
                 <Grid fluid>
-                    <Row>
+                    {/* <Row>
                         <Col md={12}>
                             <NotificationsCard/>
                         </Col>
-                    </Row>
+                    </Row> */}
                     <Row>
                         <Col md={4}>
                             <VerticalRecentProjectsCard/>
