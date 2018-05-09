@@ -8,8 +8,8 @@ import LogOut from 'views/LogOut/LogOut';
 import ProjectWorkspace from 'views/Projects/ProjectWorkspace'
 import GroupWorkspace from 'views/Groups/GroupWorkspace'
 
-// import Homepage from 'views/Home/Homepage';
-// import Login from 'views/Home/Login';
+import Homepage from 'views/Home/Homepage';
+import Login from 'views/Home/Login';
 
 const appRoutes = [
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph1", component: Dashboard },
@@ -18,7 +18,6 @@ const appRoutes = [
     { path: "/messages", name: "Messages", icon: "pe-7s-comment", component: Messages },
     { path: "/labelme", name: "LabelMe", icon: "pe-7s-pen", component: LabelMe },
     { path: "/account", name: "Account", icon: "pe-7s-user", component: Account },
-    { path: "/logout", name: "Log Out", icon: "pe-7s-left-arrow", component: LogOut },
     // { redirect: true, path: "/", to: "/dashboard", name: "Dashboard" },
 
     
@@ -28,12 +27,16 @@ const appRoutes = [
 const otherRoutes = [
     { path: "/project/:value", name: "ProjectWorkspace", component: ProjectWorkspace },
     { path: "/group/:value", name: "GroupWorkspace", component: GroupWorkspace },
-    // { path: "/homepage", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
-    // { path: "/login", name: "Login", icon: "pe-7s-note2", component: Login },
-    // { redirect: true, path: "/", to: "/homepage", name: "Homepage" },
+    
 
     
 ];
 
+const homeRoutes = [
+    { path: "/homepage", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
+    { path: "/login", name: "Login", icon: "pe-7s-note2", component: Login },
+    // { redirect: true, path: "/", to: "/homepage", name: "Homepage" },
+]
 
-export { appRoutes, otherRoutes};
+
+export { appRoutes, otherRoutes, homeRoutes };

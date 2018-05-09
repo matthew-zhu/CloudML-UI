@@ -39,25 +39,25 @@ class ProjectWorkspace extends Component {
         let LabelMe = null;
         DataTable = (
             <Table striped hover>
-                    <thead>
-                    <tr>
-                        {projAttributes.map((prop, key) => {
-                        return <th key={key}>{prop}</th>;
+                <thead>
+                <tr>
+                    {projAttributes.map((prop, key) => {
+                    return <th key={key}>{prop}</th>;
+                    })}
+                </tr>
+                </thead>
+                <tbody>
+                {projData.map((prop, key) => {
+                    return (
+                    <tr key={key}>
+                        {prop.map((prop, key) => {
+                        return <td key={key}>{prop}</td>;
                         })}
                     </tr>
-                    </thead>
-                    <tbody>
-                    {projData.map((prop, key) => {
-                        return (
-                        <tr key={key}>
-                            {prop.map((prop, key) => {
-                            return <td key={key}>{prop}</td>;
-                            })}
-                        </tr>
-                        );
-                    })}
-                    </tbody>
-                </Table>
+                    );
+                })}
+                </tbody>
+            </Table>
         );
         LabelMe = (
             <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"

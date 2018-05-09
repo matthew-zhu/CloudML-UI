@@ -47,7 +47,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {projData[0][4] + " annotations"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Project</Button>
+                                            <Button id={projData[0][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[0][0]}>View Project</Button>
                                         </Row>
                                     </div>
                                 }
@@ -66,7 +66,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {projData[1][4] + " annotations"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Project</Button>
+                                            <Button id={projData[1][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[1][0]}>View Project</Button>
                                         </Row>
                                     </div>
                                 }
@@ -85,7 +85,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {projData[2][4] + " annotations"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Project</Button>
+                                            <Button id={projData[2][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[2][0]}>View Project</Button>
                                         </Row>
                                     </div>
                                 }
@@ -125,7 +125,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {groupData[0][4] + " projects"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Group</Button>
+                                            <Button id={groupData[0][0]} pullRight onClick={() => window.location.href = '#/group/' + groupData[0][0]}>View Group</Button>
                                         </Row>
                                     </div>
                                 }
@@ -144,7 +144,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {groupData[1][4] + " projects"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Group</Button>
+                                            <Button id={groupData[1][0]} pullRight onClick={() => window.location.href = '#/group/' + groupData[1][0]}>View Group</Button>
                                         </Row>
                                     </div>
                                 }
@@ -163,7 +163,7 @@ class Dashboard extends Component {
                                                     <i className="fa fa-circle text-danger"></i> {groupData[2][4] + " projects"}
                                                 </Row>
                                             </Col>
-                                            <Button pullRight>View Group</Button>
+                                            <Button id={groupData[2][0]} pullRight onClick={() => window.location.href = '#/group/' + groupData[2][0]}>View Group</Button>
                                         </Row>
                                     </div>
                                 }

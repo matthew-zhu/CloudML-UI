@@ -61,6 +61,14 @@ class Sidebar extends Component{
                                 return null;
                             })
                         }
+                        {
+                            <li>
+                                <NavLink to={"/"} className="nav-link" activeClassName="active">
+                                <i className={"pe-7s-left-arrow"}></i>
+                                <p>{"Log Out"}</p>
+                                </NavLink>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
