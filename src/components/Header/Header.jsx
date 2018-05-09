@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar } from 'react-bootstrap';
 
-import HeaderLinks from './HeaderLinks.jsx';
-
 import { appRoutes } from 'routes/app.jsx';
 
 class Header extends Component{
@@ -64,9 +62,6 @@ class Header extends Component{
                     </Navbar.Brand>
                     <Navbar.Toggle onClick={this.mobileSidebarToggle}/>
                 </Navbar.Header>
-                <Navbar.Collapse>
-                    <HeaderLinks />
-                </Navbar.Collapse>
             </Navbar>
         );
     }

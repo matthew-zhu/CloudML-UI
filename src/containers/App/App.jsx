@@ -6,10 +6,9 @@ import {
 } from 'react-router-dom';
 
 import Header from 'components/Header/Header';
-import Footer from 'components/Footer/Footer';
 import Sidebar from 'components/Sidebar/Sidebar';
 
-import { appRoutes } from 'routes/app.jsx';
+import { appRoutes, otherRoutes } from 'routes/app.jsx';
 
 class App extends Component {
     // constructor(props){
@@ -35,8 +34,8 @@ class App extends Component {
                                     );
                                 })
                             }
-                            {/* {
-                                homeRoutes.map((prop,key) => {
+                            {
+                                otherRoutes.map((prop,key) => {
                                     if(prop.redirect)
                                         return (
                                             <Redirect from={prop.path} to={prop.to} key={key}/>
@@ -45,9 +44,8 @@ class App extends Component {
                                         <Route path={prop.path} component={prop.component} key={key}/>
                                     );
                                 })
-                            } */}
+                            }
                         </Switch>
-                    <Footer />
                 </div>
             </div>
         );

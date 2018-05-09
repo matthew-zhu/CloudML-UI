@@ -41,7 +41,7 @@ class Sidebar extends Component{
 
                         </a>
                         <a href="/" className="simple-text logo-normal">
-                            LabelMe
+                            CloudML
                         </a>
                     </div>
                 <div className="sidebar-wrapper">
