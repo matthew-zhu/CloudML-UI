@@ -4,14 +4,26 @@ import {
     FormGroup, ControlLabel, FormControl
 } from 'react-bootstrap';
 
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
+
 import {Card} from 'components/Card/Card.jsx';
 import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
 import {UserCard} from 'components/UserCard/UserCard.jsx';
 import Button from 'elements/CustomButton/CustomButton.jsx';
 
-import avatar from "assets/img/faces/face-3.jpg";
-
 class Account extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+        }
+    }
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
     render() {
         return (
             <div className="content">
@@ -23,21 +35,14 @@ class Account extends Component {
                                 content={
                                     <form>
                                         <FormInputs
-                                            ncols = {["col-md-6" , "col-md-6"]}
+                                            ncols = {["col-md-12"]}
                                             proprieties = {[
                                                 {
-                                                 label : "Username",
+                                                 label : "Display Name",
                                                  type : "text",
                                                  bsClass : "form-control",
-                                                 placeholder : "Username",
-                                                 defaultValue : "michael24",
-                                                 disabled : true
-                                                },
-                                                {
-                                                 label : "Password",
-                                                 type : "password",
-                                                 bsClass : "form-control",
-                                                 placeholder : "********",
+                                                 placeholder : "Name",
+                                                 defaultValue : this.state.user.displayName,
                                                  disabled : true
                                                 }
                                             ]}
@@ -46,39 +51,33 @@ class Account extends Component {
                                             ncols = {["col-md-12"]}
                                             proprieties = {[
                                                 {
-                                                    label : "Email address",
+                                                    label : "Email Address",
                                                     type : "email",
                                                     bsClass : "form-control",
-                                                    placeholder : "Email",
+                                                    placeholder : "Email Address",
+                                                    defaultValue : this.state.user.email,
                                                     disabled : true
                                                    }
                                             ]}
                                         />
                                         <FormInputs
-                                            ncols = {["col-md-6" , "col-md-6"]}
+                                            ncols = {["col-md-12"]}
                                             proprieties = {[
                                                 {
-                                                 label : "First name",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "First name",
-                                                 defaultValue : "Mike"
-                                                },
-                                                {
-                                                 label : "Last name",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Last name",
-                                                 defaultValue : "Andrew"
-                                                }
+                                                    label : "Phone Number",
+                                                    type : "tel",
+                                                    bsClass : "form-control",
+                                                    placeholder : "Phone Number",
+                                                    defaultValue : this.state.user.phoneNumber,
+                                                    disabled : true
+                                                   }
                                             ]}
                                         />
-
                                         <Row>
                                             <Col md={12}>
                                                 <FormGroup controlId="formControlsTextarea">
                                                     <ControlLabel>About Me</ControlLabel>
-                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Here can be your description" defaultValue="Hello, I'm Mike."/>
+                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Please write a little about yourself." defaultValue=""/>
                                                 </FormGroup>
                                             </Col>
                                         </Row>
@@ -98,12 +97,12 @@ class Account extends Component {
                         <Col md={4}>
                             <UserCard
                                 bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
-                                avatar={avatar}
-                                name="Mike Andrew"
-                                userName="michael24"
+                                avatar={this.state.user.photoURL}
+                                name={this.state.user.displayName}
+                                userName={this.state.user.email}
                                 description={
                                     <span>
-                                        "Hello, I'm Mike."
+                                        "Hello."
                                     </span>
                                 }
                                 socials={
@@ -122,4 +121,4 @@ class Account extends Component {
     }
 }
 
-export default Account;
+export default withCookies(Account);

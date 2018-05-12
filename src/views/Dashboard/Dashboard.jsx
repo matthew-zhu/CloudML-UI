@@ -1,22 +1,65 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Table, Grid, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
 
 import { UserCard } from 'components/UserCard/UserCard.jsx';
 import { Card } from 'components/Card/Card.jsx';
 
 import Button from 'elements/CustomButton/CustomButton';
 
-import avatar from "assets/img/faces/face-3.jpg";
-
-import { projData, groupData } from "variables/Variables.jsx";
+import { projData, projAttributes, groupData } from "variables/Variables.jsx";
 
 class Dashboard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+        }
+    }
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
     
     render() {
         let VerticalRecentProjectsCard = null;
         let VerticalRecentGroupsCard = null;
         let VerticalUserCard = null;
+        let YourProjectsCard = null;
+
+        YourProjectsCard = (
+            <Card
+                title="Your Projects"
+                ctTableFullWidth
+                ctTableResponsive
+                content={
+                <Table striped hover>
+                    <thead>
+                    <tr>
+                        {projAttributes.map((prop, key) => {
+                        return <th key={key}>{prop}</th>;
+                        })}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {projData.map((prop, key) => {
+                        return (
+                        <tr key={key} onClick={() => window.location.href = '#/project/' + (key+1)}>
+                            {prop.map((prop, key) => {
+                            return <td key={key}>{prop}</td>;
+                            })}
+                        </tr>
+                        );
+                    })}
+                    </tbody>
+                </Table>
+                }
+            />
+        );
 
         VerticalRecentProjectsCard = (
             <Card 
@@ -176,34 +219,37 @@ class Dashboard extends Component {
 
         VerticalUserCard = (
             <UserCard
-                                bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
-                                avatar={avatar}
-                                name="Mike Andrew"
-                                userName="michael24"
-                                description={
-                                    <span>
-                                        "Hello, I'm Mike."
-                                    </span>
-                                }
-                                socials={
-                                    <div>
-                                        <Button simple><i className="fa fa-facebook-square"></i></Button>
-                                        <Button simple><i className="fa fa-twitter"></i></Button>
-                                        <Button simple><i className="fa fa-google-plus-square"></i></Button>
-                                    </div>
-                                }
-                            />
+                bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
+                avatar={this.state.user.photoURL}
+                name={this.state.user.displayName}
+                userName={this.state.user.email}
+                description={
+                    <span>
+                        "Hello."
+                    </span>
+                }
+                socials={
+                    <div>
+                        <Button simple><i className="fa fa-facebook-square"></i></Button>
+                        <Button simple><i className="fa fa-twitter"></i></Button>
+                        <Button simple><i className="fa fa-google-plus-square"></i></Button>
+                    </div>
+                }
+            />
         );
 
         return (
             <div className="content">
                 <Grid fluid>
                     <Row>
-                        <Col md={4}>
+                        {/* <Col md={4}>
                             {VerticalRecentProjectsCard}
                         </Col>
                         <Col md={4}>
                             {VerticalRecentGroupsCard}
+                        </Col> */}
+                        <Col md={8}>
+                            {YourProjectsCard}
                         </Col>
                         <Col md={4}>
                             {VerticalUserCard}
@@ -215,4 +261,4 @@ class Dashboard extends Component {
     }
 }
 
-export default Dashboard;
+export default withCookies(Dashboard);

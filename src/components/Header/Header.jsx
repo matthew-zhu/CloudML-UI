@@ -53,16 +53,32 @@ class Header extends Component{
         })
         return name;
     }
+
+
+    
     render(){
+        let header = null;
+        if(this.getBrand()) {
+            header = (
+                <Navbar fluid>
+                    <Navbar.Header>
+                        <Navbar.Brand>
+                            <a>{this.getBrand()}</a>
+                        </Navbar.Brand>
+                        <Navbar.Toggle onClick={this.mobileSidebarToggle}/>
+                    </Navbar.Header>
+                </Navbar>
+            );
+        } else {
+            header = (
+                <div/>
+            )
+        }
+
         return (
-            <Navbar fluid>
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <a>{this.getBrand()}</a>
-                    </Navbar.Brand>
-                    <Navbar.Toggle onClick={this.mobileSidebarToggle}/>
-                </Navbar.Header>
-            </Navbar>
+            <div>
+                {header}
+            </div>
         );
     }
 }

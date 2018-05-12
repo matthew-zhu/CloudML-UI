@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Tabs, Tab, Col } from "react-bootstrap";
+import { Table, Grid, Row, Thumbnail, Tabs, Tab, Col, Breadcrumb, BreadcrumbItem, MenuItem, ButtonToolbar, DropdownButton } from "react-bootstrap";
 import Iframe from 'react-iframe';
 
+import '../../css/projectworkspace.css'
+
+import folderImage from 'assets/img/folder.jpg';
 
 import { projAttributes, projData } from "variables/Variables.jsx";
 
@@ -19,6 +22,7 @@ class ProjectWorkspace extends Component {
             projNumAnnotations: '',
         }
         this.getProject = this.getProject.bind(this)
+        this.handleClickFolder = this.handleClickFolder.bind(this)
     }
 
     componentWillMount() {
@@ -34,10 +38,71 @@ class ProjectWorkspace extends Component {
         })
     }
 
+    handleClickFolder(e) {
+        e.preventDefault();
+        e.cancelBubble = true;
+        if(e.stopPropagation) e.stopPropagation();
+
+        console.log("Click")
+    }
+
     render() {
-        let DataTable = null;
+        let Dashboard = null;
+        let Directory = null;
+        let Members = null;
         let LabelMe = null;
-        DataTable = (
+        let Settings = null;
+
+        Directory = (
+            <div>
+                <Breadcrumb>
+                    Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
+                    
+                </Breadcrumb>
+                <Grid>
+                    <Row>
+                        <Col xs={2} md={2}>
+                            <Thumbnail src={folderImage} 
+                                        alt="242x200" 
+                                        className="thumbnail"
+                                        onClick={this.handleClickFolder}
+                                        >
+                                <p className="textoverflow">Initial long text coming  here to test ellipsis</p>
+                                <p>
+                                {/* <Button bsStyle="primary" bsSize="small">Button</Button> */}
+                                </p>
+                            </Thumbnail>
+                        </Col>
+                        <Col xs={2} md={2}>
+                            <Thumbnail src={folderImage} alt="242x200" onClick={this.handleClickFolder}>
+                            <p className="textoverflow">Initial long text coming  here to test ellipsis</p>
+                                <ButtonToolbar>
+                                    <DropdownButton
+                                        bsSize="small"
+                                        title="Open"
+                                        id="dropdown-size-small"
+                                        >
+                                        <MenuItem eventKey="1">Open in LabelMe</MenuItem>
+                                        <MenuItem eventKey="2">Open JSON</MenuItem>
+                                    </DropdownButton>
+                                </ButtonToolbar>
+                            </Thumbnail>
+                        </Col>
+                    </Row>
+                </Grid>
+            </div>
+        );
+
+        LabelMe = (
+            <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"
+                width="100%"
+                height="100%"
+                display="initial"
+                position="relative"
+                allowFullScreen/>
+        );
+
+        Members = (
             <Table striped hover>
                 <thead>
                 <tr>
@@ -59,30 +124,31 @@ class ProjectWorkspace extends Component {
                 </tbody>
             </Table>
         );
-        LabelMe = (
-            <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"
-                width="100%"
-                height="100%"
-                display="initial"
-                position="relative"
-                allowFullScreen/>
+
+        Settings = (
+            <Tab eventKey={5} title="Settings">
+            </Tab>
         );
 
         return (
             
             <div className="content">
                 <Col md={6}><p><b>Project:</b> {this.state.projName}</p></Col>
-                <Col md={6}><p><b>Group:</b> {this.state.projGroup}</p></Col>
-                <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+                <Col md={6}><p><b>Admin:</b> {this.state.projGroup}</p></Col>
+                <Tabs defaultActiveKey={3} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Dashboard">
                         
                     </Tab>
-                    <Tab eventKey={2} title="Annotation Data">
-                        {DataTable}
+                    <Tab eventKey={2} title="Directory">
+                        {Directory}
                     </Tab>
                     <Tab eventKey={3} title="LabelMe Tool">
                         {LabelMe}
                     </Tab>
+                    <Tab eventKey={4} title="Members">
+                        {Members}
+                    </Tab>
+                    {Settings}
                 </Tabs>
             </div>
         )

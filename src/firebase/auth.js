@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 
 import { auth } from './firebase';
 
-var provider = new firebase.auth.GoogleAuthProvider();
+var googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // Sign up
 export const doCreateUserWithEmailAndPassword = (email, password) =>
@@ -24,5 +24,13 @@ export const doPasswordReset = (email) =>
 export const doPasswordUpdate = (password) =>
     auth.currentUser.updatePassword(password);
 
+// Sign in with Google Popup
 export const doSignInWithPopup = () =>
-    auth.signInWithPopup(provider);
+    auth.signInWithPopup(googleProvider);
+
+// Sign in with Google Redirect
+export const doSignInWithRedirect = () =>
+    auth.signInWithRedirect(googleProvider);
+
+export const doGetRedirectResult = () =>
+    auth.getRedirectResult();
