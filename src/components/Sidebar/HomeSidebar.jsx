@@ -1,21 +1,38 @@
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-import { NavItem } from 'react-bootstrap';
 
-import HeaderLinks from '../Header/HeaderLinks.jsx';
+import { auth } from '../../firebase';
+
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
 
 import imagine from 'assets/img/sidebar-4.jpg';
 import logo from 'assets/img/reactlogo.png';
 
 import { homeRoutes } from 'routes/app.jsx';
 
+import GoogleButton from 'react-google-button';
+
 class HomeSidebar extends Component{
     constructor(props){
         super(props);
         this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+            errorCode: '',
+            errorMessage: '',
+            email: '',
+            credential: '',
+
             width: window.innerWidth
         }
+        this.handleGoogleSignIn = this.handleGoogleSignIn.bind(this);
     }
+
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+    
     activeRoute(routeName) {
         return this.props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
     }
@@ -26,6 +43,30 @@ class HomeSidebar extends Component{
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions.bind(this));
     }
+
+    handleGoogleSignIn(e) {
+        e.preventDefault();
+        auth.doSignInWithPopup()
+            .then(function(result) {
+                this.setState({
+                    token: result.credential.accessToken,
+                    user: result.user,
+                })
+                this.props.cookies.set('token', this.state.token);
+                this.props.cookies.set('user', this.state.user);
+                window.location = "#/dashboard";
+                window.location.reload();
+            }.bind(this))
+            .catch(function(error) {
+                this.setState({
+                    errorCode: error.code,
+                    errorMessage: error.message,
+                    email: error.email,
+                    credential: error.credential,
+                })
+            }.bind(this));
+    }
+
     render(){
         const sidebarBackground = {
             backgroundImage: 'url(' + imagine + ')'
@@ -46,7 +87,6 @@ class HomeSidebar extends Component{
                     </div>
                 <div className="sidebar-wrapper">
                     <ul className="nav">
-                        { this.state.width <= 991 ? (<HeaderLinks />):null }
                         {
                             homeRoutes.map((prop,key) => {
                                 if(!prop.redirect)
@@ -61,6 +101,10 @@ class HomeSidebar extends Component{
                                 return null;
                             })
                         }
+                        <GoogleButton
+                            type="light"
+                            onClick={ this.handleGoogleSignIn }
+                        />
                     </ul>
                 </div>
             </div>
@@ -68,4 +112,4 @@ class HomeSidebar extends Component{
     }
 }
 
-export default HomeSidebar;
+export default withCookies(HomeSidebar);

@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-// import { NavItem } from 'react-bootstrap';
 
-import HeaderLinks from '../Header/HeaderLinks.jsx';
+import { auth } from '../../firebase';
+
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
 
 import imagine from 'assets/img/sidebar-4.jpg';
 import logo from 'assets/img/reactlogo.png';
@@ -13,9 +15,18 @@ class Sidebar extends Component{
     constructor(props){
         super(props);
         this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+
             width: window.innerWidth
         }
+        this.handleSignOut = this.handleSignOut.bind(this);
     }
+
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
     activeRoute(routeName) {
         return this.props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
     }
@@ -26,6 +37,28 @@ class Sidebar extends Component{
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions.bind(this));
     }
+    
+    handleSignOut(e) {
+        e.preventDefault();
+        auth.doSignOut().then(function(result) {
+            this.setState({
+                token: '',
+                user: '',
+            });
+            this.props.cookies.set('token', this.state.token);
+            this.props.cookies.set('user', this.state.user);
+            window.location = "/";
+        }.bind(this))
+        .catch(function(error) {
+            this.setState({
+                errorCode: error.code,
+                errorMessage: error.message,
+                email: error.email,
+                credential: error.credential,
+            });
+        }.bind(this));;
+    }
+
     render(){
         const sidebarBackground = {
             backgroundImage: 'url(' + imagine + ')'
@@ -46,7 +79,6 @@ class Sidebar extends Component{
                     </div>
                 <div className="sidebar-wrapper">
                     <ul className="nav">
-                        { this.state.width <= 991 ? (<HeaderLinks />):null }
                         {
                             appRoutes.map((prop,key) => {
                                 if(!prop.redirect)
@@ -63,9 +95,9 @@ class Sidebar extends Component{
                         }
                         {
                             <li>
-                                <NavLink to={"/"} className="nav-link" activeClassName="active">
-                                <i className={"pe-7s-left-arrow"}></i>
-                                <p>{"Log Out"}</p>
+                                <NavLink to="/" className="nav-link" activeClassName="active" onClick={ this.handleSignOut }>
+                                    <i className={"pe-7s-left-arrow"}></i>
+                                    <p>{"Sign Out"}</p>
                                 </NavLink>
                             </li>
                         }
@@ -76,4 +108,4 @@ class Sidebar extends Component{
     }
 }
 
-export default Sidebar;
+export default withCookies(Sidebar);

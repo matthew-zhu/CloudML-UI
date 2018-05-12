@@ -4,12 +4,10 @@ import Groups from 'views/Groups/Groups';
 import Messages from 'views/Messages/Messages';
 import LabelMe from 'views/LabelMe/LabelMe'
 import Account from 'views/Account/Account';
-import LogOut from 'views/LogOut/LogOut';
 import ProjectWorkspace from 'views/Projects/ProjectWorkspace'
 import GroupWorkspace from 'views/Groups/GroupWorkspace'
 
 import Homepage from 'views/Home/Homepage';
-import Login from 'views/Home/Login';
 
 const appRoutes = [
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph1", component: Dashboard },
@@ -33,8 +31,7 @@ const otherRoutes = [
 ];
 
 const homeRoutes = [
-    { path: "/homepage", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
-    { path: "/login", name: "Login", icon: "pe-7s-note2", component: Login },
+    { path: "/", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
     // { redirect: true, path: "/", to: "/homepage", name: "Homepage" },
 ]
 

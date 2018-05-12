@@ -4,6 +4,8 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom';
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
 
 import Header from 'components/Header/Header';
 import HomeHeader from 'components/Header/HomeHeader';
@@ -13,15 +15,22 @@ import HomeSidebar from 'components/Sidebar/HomeSidebar';
 import { appRoutes, otherRoutes, homeRoutes } from 'routes/app.jsx';
 
 class App extends Component {
-    // constructor(props){
-    //     super(props);
-    // }
+    constructor(props){
+        super(props);
+        this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+        }
+    }
+
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
 
     render() {
-        var IsLoggedIn = true;
         App = null;
 
-        if (IsLoggedIn) {
+        if (this.state.token) {
             App = (
                 <div className="wrapper">
                     <Sidebar {...this.props} />
@@ -86,4 +95,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default withCookies(App);

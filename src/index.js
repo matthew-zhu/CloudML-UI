@@ -7,8 +7,9 @@ import {
     Switch
 } from 'react-router-dom';
 
+import { CookiesProvider } from 'react-cookie';
+
 import App from 'containers/App/App.jsx';
-// import Home from 'containers/Home/Home.jsx';
 
 import './assets/css/bootstrap.min.css';
 import './assets/css/animate.min.css';
@@ -18,10 +19,11 @@ import './assets/css/pe-icon-7-stroke.css';
 
 
 ReactDOM.render((
-    <HashRouter>
-        <Switch>
-            {/* <Route path="/" name="Homepage" component={Home} /> */}
-            <Route path="/" name="Dashboard" component={App} />
-        </Switch>
-    </HashRouter>
+    <CookiesProvider>
+        <HashRouter>
+            <Switch>
+                <Route path="/" name="Dashboard" component={App} />
+            </Switch>
+        </HashRouter>
+    </CookiesProvider>
 ),document.getElementById('root'));
