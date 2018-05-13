@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { auth } from '../../firebase';
-
-import { instanceOf } from 'prop-types';
 import { Cookies, withCookies} from 'react-cookie';
+import { instanceOf } from 'prop-types';
+
+import axios from 'axios';
+import url from '../../serverurl'
+import swal from 'sweetalert'
 
 import imagine from 'assets/img/sidebar-4.jpg';
 import logo from 'assets/img/reactlogo.png';
@@ -48,14 +51,44 @@ class HomeSidebar extends Component{
         e.preventDefault();
         auth.doSignInWithPopup()
             .then(function(result) {
+                console.log(result)
                 this.setState({
                     token: result.credential.accessToken,
                     user: result.user,
                 })
                 this.props.cookies.set('token', this.state.token);
                 this.props.cookies.set('user', this.state.user);
-                window.location = "#/dashboard";
-                window.location.reload();
+
+                if(result.additionalUserInfo.isNewUser) {
+                    var profile = result.additionalUserInfo.profile;
+                    var data = {
+                        first_name: profile.given_name,
+                        last_name: profile.family_name,
+                        dob: "",
+                        email: profile.email,
+                        phone_number: 0,
+                        avatar_url: profile.picture,
+                        configs: {
+                        
+                        }
+                    }
+                    
+                    // axios.post(url + '/createuser', data)
+                    //     .then((response) => {
+                    //         if(response.data.message === "success") {
+                                window.location = "#/dashboard";
+                                window.location.reload();
+                        //     } else {
+                        //         swal("Error", "", "error");
+                        //     }
+                        // }).catch((error) => {
+                        //     console.log(error);
+                        //     swal("Network Error", "User could not be created.", "error");
+                        // })
+                } else {
+                    window.location = "#/dashboard";
+                    window.location.reload();
+                }
             }.bind(this))
             .catch(function(error) {
                 this.setState({
@@ -65,27 +98,8 @@ class HomeSidebar extends Component{
                     credential: error.credential,
                 })
             }.bind(this));
-        // auth.doSignInWithRedirect()
-        // .then(auth.doGetRedirectResult()
-        //     .then(function(result) {
-        //         console.log(result.credential.accessToken);
-        //         this.setState({
-        //             token: result.credential.accessToken,
-        //             user: result.user,
-        //         })
-        //         this.props.cookies.set('token', this.state.token);
-        //         this.props.cookies.set('user', this.state.user);
-        //         window.location = "#/dashboard";
-        //         window.location.reload();
-        //     }.bind(this))
-        //     .catch(function(error) {
-        //         this.setState({
-        //             errorCode: error.code,
-        //             errorMessage: error.message,
-        //             email: error.email,
-        //             credential: error.credential,
-        //         })
-        //     }.bind(this)));
+
+            
     }
 
     render(){

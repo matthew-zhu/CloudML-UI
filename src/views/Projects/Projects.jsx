@@ -6,10 +6,45 @@ import '../../css/projects.css'
 import {Card} from 'components/Card/Card.jsx';
 import Button from 'elements/CustomButton/CustomButton';
 
+import axios from 'axios';
+import url from '../../serverurl'
+
 import { projAttributes, projData } from "variables/Variables.jsx";
 
 
 class Projects extends Component {
+    constructor(props){
+        super();
+
+        this.state = {
+            yourProjects: [],
+            allProjects: [],
+        }
+        this.getAllProjects = this.getAllProjects.bind(this);
+        this.getYourProjects = this.getYourProjects.bind(this);
+    }
+
+    getYourProjects() {
+        axios.get(url + '/getyourprojects')
+            .then((response) => {
+                if(response.data.message === "success"){
+                    this.setState({
+                        yourProjects: response.data.yourProjects,
+                    })
+                }
+            })
+    }
+
+    getAllProjects() {
+        axios.get(url + '/getallprojects')
+            .then((response) => {
+                if(response.data.message === "success"){
+                    this.setState({
+                        allProjects: response.data.allProjects,
+                    })
+                }
+            })
+    }
 
     render() {
         let YourProjectsCard = null;
