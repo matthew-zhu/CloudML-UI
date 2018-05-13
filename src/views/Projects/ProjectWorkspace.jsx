@@ -4,8 +4,12 @@ import {
     Thumbnail, Tabs, Tab, 
     Breadcrumb, BreadcrumbItem, 
     MenuItem, ButtonToolbar, DropdownButton,
-    FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+    FormGroup, ControlLabel, FormControl,
+    Glyphicon } from "react-bootstrap";
 import Iframe from 'react-iframe';
+
+import { Cookies, withCookies} from 'react-cookie';
+import { instanceOf } from 'prop-types';
 
 import axios from 'axios';
 import url from '../../serverurl'
@@ -13,26 +17,22 @@ import swal from 'sweetalert'
 
 import '../../css/projectworkspace.css'
 
-import folderImage from 'assets/img/folder.jpg';
-
-
 import { Card } from 'components/Card/Card.jsx';
 import Button from 'elements/CustomButton/CustomButton.jsx';
+
+import folderImage from 'assets/img/folder.jpg';
+import jsonImage from 'assets/img/jsonfile.png';
 
 import { projAttributes, projData } from "variables/Variables.jsx";
 
 
 class ProjectWorkspace extends Component {
-
     constructor(props){
-        super();
+        super(props);
 
         this.state = {
-            projID: props.match.params.value,
-            projName: '',
-            projGroup: '',
-            projNumImages: '',
-            projNumAnnotations: '',
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
 
             project_id: '',
             project_name: '',
@@ -44,15 +44,55 @@ class ProjectWorkspace extends Component {
 
             update_project_name: '',
             update_project_desc: '',
+
+            projID: props.match.params.value,
+            projName: '',
+            projGroup: '',
+            projNumImages: '',
+            projNumAnnotations: '',
         }
-        this.getProject = this.getProject.bind(this)
-        this.handleClickFolder = this.handleClickFolder.bind(this)
+        this.getUser = this.getUser.bind(this);
+        this.getProject = this.getProject.bind(this);
+        this.getFolder = this.getFolder.bind(this);
+        this.getMembers = this.getMembers.bind(this);
+        this.displayDirectory = this.displayDirectory.bind(this);
+        this.handleClickFolder = this.handleClickFolder.bind(this);
+        this.handleClickDropdown = this.handleClickDropdown.bind(this);
+        this.handleOpenJSON = this.handleOpenJSON.bind(this);
+        this.handleOpenLabelMe = this.handleOpenLabelMe.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdateProject = this.handleUpdateProject.bind(this);
+        this.handleLeaveProject = this.handleLeaveProject.bind(this);
     }
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
 
     componentWillMount() {
-        this.getProject();
+        // this.getUser();
+        // this.getProject();
+    }
+
+    getUser() {
+        axios.get(url + '/getuser/' + this.state.token)
+            .then((response) => {
+                if(response.data.message === "success") {
+                    this.setState({
+                        first_name: response.data.first_name,
+                        last_name: response.data.last_name,
+                        dob: response.data.dob,
+                        email: response.data.email,
+                        phone_number: response.data.phone_number,
+                        avatar_url: response.data.avatar_url,
+                        configs: response.data.configs,
+                    });
+                } else {
+                    swal("Error", "", "error");
+                }
+            }).catch((error) => {
+                console.log(error);
+                swal("Network Error", "User could not be fetched.", "error");
+            })
     }
 
     getProject() {
@@ -63,29 +103,118 @@ class ProjectWorkspace extends Component {
             projNumAnnotations: projData[this.state.projID-1][4],
         })
 
-        // axios.get(url + '/getproject')
-        //     .then((response) => {
-        //         if(response.data.message === "success"){
-        //             this.setState({
-        //                 project_id: response.data.project_id,
-        //                 project_name: response.data.project_name,
-        //                 project_desc: response.data.project_desc,
-        //                 project_url: response.data.project_url,
-        //                 permission: response.data.permission,
-        //                 owner_name: response.data.owner_name,
-        //                 folders: response.data.folders,
-        //                 files: response.data.files,
-        //             })
-        //         }
-        //     })
+        axios.get(url + '/getproject/:id')
+            .then((response) => {
+                if(response.data.message === "success"){
+                    this.setState({
+                        project_id: response.data.project_id,
+                        project_name: response.data.project_name,
+                        project_desc: response.data.project_desc,
+                        project_url: response.data.project_url,
+                        permission: response.data.permission,
+                        owner_name: response.data.owner_name,
+                        folders: response.data.folders,
+                        files: response.data.files,
+                    })
+                }
+            })
+    }
+    
+    getFolder() {
+
+    }
+
+    getMembers() {
+
+    }
+
+    displayDirectory() {
+        return(
+            <Card 
+                title = "Directory"
+                content = {
+                    <div className="content">
+                        <Breadcrumb>
+                            Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
+                        </Breadcrumb>
+                        <Grid fluid>
+                            <Row>
+                                <div>
+                                    <Thumbnail 
+                                        className="thumbnail"
+                                        onClick={ this.handleClickFolder }
+                                        >
+                                        <img src={ folderImage } className="tn" alt="folder"/>
+                                        <Row>
+                                            <Col md={10}>
+                                                <p className="textoverflow thumbnail-title">Initial long text coming  here to test ellipsis</p>
+                                            </Col>
+                                            <Col md={2}>
+                                                <Button className="thumbnail-button" bsSize="small"><Glyphicon glyph="folder-open"/></Button>
+                                    
+                                            </Col>
+                                        </Row>
+                                    </Thumbnail>
+                                    <Thumbnail 
+                                        className="thumbnail"
+                                        onClick={ this.handleClickFolder }
+                                        >
+                                        <img src={ jsonImage } className="tn" alt="file"/>
+                                        <Row>
+                                            <Col md={10}>
+                                                <p className="textoverflow thumbnail-title">Initial long text coming  here to test ellipsis</p>
+                                            </Col>
+                                            <Col md={2}>
+                                                <ButtonToolbar className="thumbnail-button">
+                                                    <DropdownButton
+                                                        bsSize="small"
+                                                        title={<Glyphicon glyph="menu-hamburger"/>}
+                                                        noCaret
+                                                        id="dropdown-size-small"
+                                                        onClick = { this.handleClickDropdown }
+                                                        >
+                                                        <MenuItem eventKey="1" onClick = { this.handleOpenLabelMe }>Open in LabelMe</MenuItem>
+                                                        <MenuItem eventKey="2" onClick = { this.handleOpenJSON }>Open JSON</MenuItem>
+                                                    </DropdownButton>
+                                                </ButtonToolbar>
+                                            </Col>
+                                        </Row>
+                                    </Thumbnail>
+                                </div>
+                            </Row>
+                        </Grid>
+                    </div>
+                }
+            />
+        )
     }
 
     handleClickFolder(e) {
         e.preventDefault();
+
+        console.log("Click")
+    }
+
+    handleClickDropdown(e) {
+        e.preventDefault();
+        e.cancelBubble = true;
+        if(e.stopPropagation) e.stopPropagation();
+    }
+
+    handleOpenJSON(e) {
+        e.preventDefault();
         e.cancelBubble = true;
         if(e.stopPropagation) e.stopPropagation();
 
-        console.log("Click")
+        window.open("", '_blank').focus();
+    }
+
+    handleOpenLabelMe(e) {
+        e.preventDefault();
+        e.cancelBubble = true;
+        if(e.stopPropagation) e.stopPropagation();
+
+        window.open("http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg", '_blank').focus();
     }
 
     handleChange(e) {
@@ -106,11 +235,10 @@ class ProjectWorkspace extends Component {
                 'update_project_name': this.state.update_project_name,
                 'update_project_desc': this.state.update_project_desc,
             }
-            axios.post(url + '/createproject', data)
+            axios.post(url + '/updateproject', data)
                 .then((response) => {
                     if(response.data.message === "success") {
-                        //redirect to newly created project page
-                        
+                        swal("Success", "This projects has been updated.", "success")
                     } else {
                         swal("Error", "", "error");
                     }
@@ -119,10 +247,12 @@ class ProjectWorkspace extends Component {
                     swal("Network Error", "Project could not be updated.", "error");
                 })
         } else {
-            swal("Error", "Please complete all fields.", "error");
+            swal("Warning", "Please complete all fields.", "warning");
         }
+    }
 
-        
+    handleLeaveProject(e) {
+        e.preventDefault();
     }
 
     render() {
@@ -141,49 +271,7 @@ class ProjectWorkspace extends Component {
             />
         );
 
-        Directory = (
-            <Card 
-                title = "Directory"
-                content = {
-                    <div className="content">
-                        <Breadcrumb>
-                            Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
-                        </Breadcrumb>
-                        <Grid fluid>
-                            <Row>
-                                <Col xs={2} md={2}>
-                                    <Thumbnail src={folderImage} 
-                                                alt="242x200" 
-                                                className="thumbnail"
-                                                onClick={this.handleClickFolder}
-                                                >
-                                        <p className="textoverflow">Initial long text coming  here to test ellipsis</p>
-                                        <p>
-                                        {/* <Button bsStyle="primary" bsSize="small">Button</Button> */}
-                                        </p>
-                                    </Thumbnail>
-                                </Col>
-                                <Col xs={2} md={2}>
-                                    <Thumbnail src={folderImage} alt="242x200" onClick={this.handleClickFolder}>
-                                    <p className="textoverflow">Initial long text coming  here to test ellipsis</p>
-                                        <ButtonToolbar>
-                                            <DropdownButton
-                                                bsSize="small"
-                                                title="Open"
-                                                id="dropdown-size-small"
-                                                >
-                                                <MenuItem eventKey="1">Open in LabelMe</MenuItem>
-                                                <MenuItem eventKey="2">Open JSON</MenuItem>
-                                            </DropdownButton>
-                                        </ButtonToolbar>
-                                    </Thumbnail>
-                                </Col>
-                            </Row>
-                        </Grid>
-                    </div>
-                }
-            />
-        );
+        Directory = this.displayDirectory();
 
         LabelMe = (
             <Card 
@@ -289,7 +377,7 @@ class ProjectWorkspace extends Component {
             <div className="content">
                 <Col md={6}><p><b>Project:</b> {this.state.projName}</p></Col>
                 <Col md={6}><p><b>Admin:</b> {this.state.projGroup}</p></Col>
-                <Tabs defaultActiveKey={3} id="uncontrolled-tab-example">
+                <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
                     <Tab eventKey={1} title="Dashboard">
                         {Dashboard}
                     </Tab>
@@ -313,4 +401,4 @@ class ProjectWorkspace extends Component {
 
 }
 
-export default ProjectWorkspace;
+export default withCookies(ProjectWorkspace);

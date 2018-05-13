@@ -1,55 +1,85 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col, Table } from "react-bootstrap";
 
-import '../../css/projects.css'
-
-import {Card} from 'components/Card/Card.jsx';
-import Button from 'elements/CustomButton/CustomButton';
+import { instanceOf } from 'prop-types';
+import { Cookies, withCookies} from 'react-cookie';
 
 import axios from 'axios';
 import url from '../../serverurl'
+import swal from 'sweetalert'
+
+import '../../css/projects.css'
+
+import { Card } from 'components/Card/Card.jsx';
+import Button from 'elements/CustomButton/CustomButton';
 
 import { projAttributes, projData } from "variables/Variables.jsx";
 
 
 class Projects extends Component {
     constructor(props){
-        super();
+        super(props);
 
         this.state = {
+            token: this.props.cookies.get('token') || '',
+            user: this.props.cookies.get('user') || '',
+
             yourProjects: [],
             allProjects: [],
         }
         this.getAllProjects = this.getAllProjects.bind(this);
         this.getYourProjects = this.getYourProjects.bind(this);
+        this.joinProject = this.joinProject.bind(this);
+    }
+    static propTypes = {
+        cookies: instanceOf(Cookies).isRequired
+    };
+
+    componentWillMount() {
+        // this.getYourProjects();
+        // this.getAllProjects();
     }
 
     getYourProjects() {
-        axios.get(url + '/getyourprojects')
+        axios.get(url + '/getyourprojects/' + this.state.token)
             .then((response) => {
                 if(response.data.message === "success"){
                     this.setState({
                         yourProjects: response.data.yourProjects,
                     })
+                } else {
+                    swal("Error", "", "error");
                 }
+            }).catch((error) => {
+                console.log(error);
+                swal("Network Error", "Your projects could not be fetched.", "error");
             })
     }
 
     getAllProjects() {
-        axios.get(url + '/getallprojects')
+        axios.get(url + '/getallprojects/' + this.state.token)
             .then((response) => {
                 if(response.data.message === "success"){
                     this.setState({
                         allProjects: response.data.allProjects,
                     })
+                } else {
+                    swal("Error", "", "error");
                 }
+            }).catch((error) => {
+                console.log(error);
+                swal("Network Error", "All projects could not be fetched.", "error");
             })
+    }
+
+    joinProject() {
+
     }
 
     render() {
         let YourProjectsCard = null;
         let AllProjectsCard = null;
-        // let HorizontalRecentProjectsCard = null;
+
         YourProjectsCard = (
             <Card
                 title="Your Projects"
@@ -109,96 +139,10 @@ class Projects extends Component {
                 }
             />
         );
-        // HorizontalRecentProjectsCard = (
-        //     <Card 
-        //         title={
-        //             <Row>
-        //                 <Col md={12}>
-        //                     Recent Projects
-        //                 </Col>
-        //             </Row>
-        //         }
-        //         content={
-        //             <Row>
-        //                 <Col md={4}>
-        //                     <Card
-        //                         title={projData[0][1]}
-        //                         category={projData[0][2]}
-        //                         content={
-        //                             <div className="content">
-        //                                 <Row>
-        //                                     <Col md={8}>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-info"></i> {projData[0][3] + " images"}
-        //                                         </Row>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-danger"></i> {projData[0][4] + " annotations"}
-        //                                         </Row>
-        //                                     </Col>
-        //                                     <Button id={projData[0][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[0][0]}>View Project</Button>
-        //                                 </Row>
-        //                             </div>
-        //                         }
-        //                     />
-        //                 </Col>
-        //                 <Col md={4}>
-        //                     <Card
-        //                         title={projData[1][1]}
-        //                         category={projData[1][2]}
-        //                         content={
-        //                             <div className="content">
-        //                                 <Row>
-        //                                     <Col md={5}>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-info"></i> {projData[1][3] + " images"}
-        //                                         </Row>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-danger"></i> {projData[1][4] + " annotations"}
-        //                                         </Row>
-        //                                     </Col>
-        //                                     <Button id={projData[1][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[1][0]}>View Project</Button>
-        //                                 </Row>
-        //                             </div>
-        //                         }
-        //                     />
-        //                 </Col>
-        //                 <Col md={4}>
-        //                     <Card
-        //                         title={projData[2][1]}
-        //                         category={projData[2][2]}
-        //                         content={
-        //                             <div className="content">
-        //                                 <Row>
-        //                                     <Col md={8}>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-info"></i> {projData[2][3] + " images"}
-        //                                         </Row>
-        //                                         <Row>
-        //                                             <i className="fa fa-circle text-danger"></i> {projData[2][4] + " annotations"}
-        //                                         </Row>
-        //                                     </Col>
-        //                                     <Button id={projData[2][0]} pullRight onClick={() => window.location.href = '#/project/' + projData[2][0]}>View Project</Button>
-        //                                 </Row>
-        //                             </div>
-        //                         }
-        //                     />
-        //                 </Col>
-        //             </Row>
-        //         } 
-        //     />
-        // );
-
-
-
 
         return (
             <div className="content">
                 <Grid fluid>
-                    {/* <Row>
-                        <Col md={12}>
-                            {HorizontalRecentProjectsCard}
-                        </Col>
-                    </Row> */}
                     <Row>
                         <Col md={10}>
                             {YourProjectsCard}
@@ -219,4 +163,4 @@ class Projects extends Component {
     
 }
 
-export default Projects;
+export default withCookies(Projects);

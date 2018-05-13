@@ -9,12 +9,12 @@ import axios from 'axios';
 import url from '../../serverurl'
 import swal from 'sweetalert'
 
-import imagine from 'assets/img/sidebar-4.jpg';
-import logo from 'assets/img/reactlogo.png';
-
 import { homeRoutes } from 'routes/app.jsx';
 
+import imagine from 'assets/img/sidebar-4.jpg';
+import logo from 'assets/img/reactlogo.png';
 import GoogleButton from 'react-google-button';
+
 
 class HomeSidebar extends Component{
     constructor(props){
@@ -22,6 +22,7 @@ class HomeSidebar extends Component{
         this.state = {
             token: this.props.cookies.get('token') || '',
             user: this.props.cookies.get('user') || '',
+
             errorCode: '',
             errorMessage: '',
             email: '',
@@ -73,7 +74,7 @@ class HomeSidebar extends Component{
                         }
                     }
                     
-                    // axios.post(url + '/createuser', data)
+                    // axios.post(url + '/createuser/' + result.credential.accessToken, data)
                     //     .then((response) => {
                     //         if(response.data.message === "success") {
                                 window.location = "#/dashboard";
@@ -98,8 +99,6 @@ class HomeSidebar extends Component{
                     credential: error.credential,
                 })
             }.bind(this));
-
-            
     }
 
     render(){
@@ -117,7 +116,7 @@ class HomeSidebar extends Component{
 
                         </a>
                         <a href="/" className="simple-text logo-normal">
-                            LabelMe
+                            CloudML
                         </a>
                     </div>
                 <div className="sidebar-wrapper">

@@ -2,9 +2,31 @@
     overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
-    width:150px;
+    width:100%;
  }
 
  .thumbnail {
     cursor: pointer;
+    width: 225px;
+    float: left;
+    margin-right: 25px;
+    margin-bottom: 25px;
+ }
+
+ p.thumbnail-title {
+    font-size: 1em;
+ }
+ 
+ .thumbnail-button {
+    float: right;
+ }
+
+ img.tn {
+    height: 125px;
+    width: auto;
+    max-width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: cover;
  }

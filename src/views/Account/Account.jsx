@@ -7,9 +7,12 @@ import {
 import { instanceOf } from 'prop-types';
 import { Cookies, withCookies} from 'react-cookie';
 
-import {Card} from 'components/Card/Card.jsx';
-import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
-import {UserCard} from 'components/UserCard/UserCard.jsx';
+import axios from 'axios';
+import url from '../../serverurl'
+import swal from 'sweetalert'
+
+import { Card } from 'components/Card/Card.jsx';
+import { UserCard } from 'components/UserCard/UserCard.jsx';
 import Button from 'elements/CustomButton/CustomButton.jsx';
 
 class Account extends Component {
@@ -18,11 +21,82 @@ class Account extends Component {
         this.state = {
             token: this.props.cookies.get('token') || '',
             user: this.props.cookies.get('user') || '',
+
+            first_name: '',
+            last_name: '',
+            dob: '',
+            email: '',
+            phone_number: '',
+            avatar_url: '',
+            configs: [],
         }
+        this.handleChange = this.handleChange.bind(this);        
+        this.getUser = this.getUser.bind(this);
+        this.handleUpdateProfile = this.handleUpdateProfile.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
     };
+    
+    componentWillMount() {
+        this.getUser();
+    }
+
+    handleChange(e) {
+        this.setState({
+            [e.target.name]: e.target.value
+        });
+    }
+
+    getUser() {
+        axios.get(url + '/getuser/' + this.state.token)
+            .then((response) => {
+                if(response.data.message === "success") {
+                    this.setState({
+                        first_name: response.data.first_name,
+                        last_name: response.data.last_name,
+                        dob: response.data.dob,
+                        email: response.data.email,
+                        phone_number: response.data.phone_number,
+                        avatar_url: response.data.avatar_url,
+                        configs: response.data.configs,
+                    });
+                } else {
+                    swal("Error", "", "error");
+                }
+            }).catch((error) => {
+                console.log(error);
+                swal("Network Error", "User could not be fetched.", "error");
+            })
+    }
+
+    handleUpdateProfile(e) {
+        if(this.state.first_name && this.state.last_name && this.state.email && this.state.avatar_url) {
+            var data = {
+                first_name: this.state.first_name,
+                last_name: this.state.last_name,
+                dob: this.state.dob,
+                email: this.state.email,
+                phone_number: this.state.phone_number,
+                avatar_url: this.state.avatar_url,
+                configs: this.state.configs,
+            }
+            axios.post(url + '/updateuser/' + this.state.token, data)
+                .then((response) => {
+                    if(response.data.message === "success") {
+                        // window.location.reload();
+                        swal("Success", "Your profile has been updated.", "success")
+                    } else {
+                        swal("Error", "", "error");
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    swal("Network Error", "User could not be updated.", "error");
+                })
+        } else {
+            swal("Warning", "Please complete name, email, and image fields.", "warning");
+        }
+    }
 
     render() {
         return (
@@ -31,64 +105,90 @@ class Account extends Component {
                     <Row>
                         <Col md={8}>
                             <Card
-                                title="Edit Profile"
+                                title="Update Profile"
                                 content={
                                     <form>
-                                        <FormInputs
-                                            ncols = {["col-md-12"]}
-                                            proprieties = {[
-                                                {
-                                                 label : "Display Name",
-                                                 type : "text",
-                                                 bsClass : "form-control",
-                                                 placeholder : "Name",
-                                                 defaultValue : this.state.user.displayName,
-                                                 disabled : true
-                                                }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-12"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "Email Address",
-                                                    type : "email",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Email Address",
-                                                    defaultValue : this.state.user.email,
-                                                    disabled : true
-                                                   }
-                                            ]}
-                                        />
-                                        <FormInputs
-                                            ncols = {["col-md-12"]}
-                                            proprieties = {[
-                                                {
-                                                    label : "Phone Number",
-                                                    type : "tel",
-                                                    bsClass : "form-control",
-                                                    placeholder : "Phone Number",
-                                                    defaultValue : this.state.user.phoneNumber,
-                                                    disabled : true
-                                                   }
-                                            ]}
-                                        />
                                         <Row>
-                                            <Col md={12}>
+                                            <Col md={6}>
                                                 <FormGroup controlId="formControlsTextarea">
-                                                    <ControlLabel>About Me</ControlLabel>
-                                                    <FormControl rows="5" componentClass="textarea" bsClass="form-control" placeholder="Please write a little about yourself." defaultValue=""/>
+                                                    <ControlLabel>First Name</ControlLabel>
+                                                    <FormControl 
+                                                        name="first_name" 
+                                                        rows="1" 
+                                                        bsClass="form-control" 
+                                                        placeholder="First Name" 
+                                                        onChange = { this.handleChange }
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col md={6}>
+                                                <FormGroup controlId="formControlsTextarea">
+                                                    <ControlLabel>Last Name</ControlLabel>
+                                                    <FormControl 
+                                                        name="last_name" 
+                                                        rows="1" 
+                                                        bsClass="form-control" 
+                                                        placeholder="Last Name" 
+                                                        defaultValue = ""
+                                                        onChange = { this.handleChange }
+                                                />
                                                 </FormGroup>
                                             </Col>
                                         </Row>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Email Address</ControlLabel>
+                                            <FormControl 
+                                                name="email" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Email Address" 
+                                                defaultValue = ""
+                                                onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Phone Number</ControlLabel>
+                                            <FormControl 
+                                                name="phone_number" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Phone Number" 
+                                                defaultValue = ""
+                                                onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Date of Birth</ControlLabel>
+                                            <FormControl 
+                                                name="dob" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Date of Birth" 
+                                                defaultValue = ""
+                                                onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Image</ControlLabel>
+                                            <FormControl 
+                                                name="avatar_url" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Image" 
+                                                defaultValue = ""
+                                                onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
                                         <Button
                                             bsStyle="info"
                                             pullRight
                                             fill
                                             type="submit"
-                                        >
+                                            onClick={ this.handleUpdateProfile }
+                                            >
                                             Update Profile
                                         </Button>
+                                        
                                         <div className="clearfix"></div>
                                     </form>
                                 }
@@ -98,11 +198,13 @@ class Account extends Component {
                             <UserCard
                                 bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
                                 avatar={this.state.user.photoURL}
-                                name={this.state.user.displayName}
-                                userName={this.state.user.email}
+                                name={this.state.first_name + " " + this.state.last_name}
+                                userName={this.state.email}
                                 description={
                                     <span>
-                                        "Hello."
+                                        <span>Phone: {this.state.phone_number}</span>
+                                        <br/>
+                                        <span>DOB: {this.state.dob}</span>
                                     </span>
                                 }
                                 socials={
@@ -115,7 +217,7 @@ class Account extends Component {
                             />
                         </Col>
                     </Row>
-                </Grid>>
+                </Grid>
             </div>
         );
     }

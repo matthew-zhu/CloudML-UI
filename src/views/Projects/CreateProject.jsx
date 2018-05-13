@@ -6,6 +6,7 @@ import {
 
 import { instanceOf } from 'prop-types';
 import { Cookies, withCookies} from 'react-cookie';
+
 import axios from 'axios';
 import url from '../../serverurl'
 import swal from 'sweetalert'
@@ -21,15 +22,50 @@ class CreateProject extends Component {
             token: this.props.cookies.get('token') || '',
             user: this.props.cookies.get('user') || '',
 
+            first_name: '',
+            last_name: '',
+            dob: '',
+            email: '',
+            phone_number: '',
+            avatar_url: '',
+            configs: [],
+
             project_name: '',
             project_desc: '',
         }
+        this.getUser = this.getUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleCreateProject = this.handleCreateProject.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
     };
+    
+    componentWillMount() {
+        // this.getUser();
+    }
+
+    getUser() {
+        axios.get(url + '/getuser/' + this.state.token)
+            .then((response) => {
+                if(response.data.message === "success") {
+                    this.setState({
+                        first_name: response.data.first_name,
+                        last_name: response.data.last_name,
+                        dob: response.data.dob,
+                        email: response.data.email,
+                        phone_number: response.data.phone_number,
+                        avatar_url: response.data.avatar_url,
+                        configs: response.data.configs,
+                    });
+                } else {
+                    swal("Error", "", "error");
+                }
+            }).catch((error) => {
+                console.log(error);
+                swal("Network Error", "User could not be fetched.", "error");
+            })
+    }
 
     handleChange(e) {
         this.setState({
@@ -49,11 +85,11 @@ class CreateProject extends Component {
                 'project_name': this.state.project_name,
                 'project_desc': this.state.project_desc,
             }
-            axios.post(url + '/createproject', data)
+            axios.post(url + '/createproject/' + this.state.token, data)
                 .then((response) => {
                     if(response.data.message === "success") {
                         //redirect to newly created project page
-                        
+                        window.location.href("#/project/" + response.data.id)
                     } else {
                         swal("Error", "", "error");
                     }
@@ -62,9 +98,8 @@ class CreateProject extends Component {
                     swal("Network Error", "Project could not be created.", "error");
                 })
         } else {
-            swal("Error", "Please complete all fields.", "error");
+            swal("Warning", "Please complete all fields.", "warning");
         }
-        
     }
 
 
@@ -98,7 +133,7 @@ class CreateProject extends Component {
                                                         rows="1" 
                                                         bsClass="form-control" 
                                                         placeholder="Owner of the project" 
-                                                        defaultValue = { this.state.user.displayName }
+                                                        defaultValue = { this.state.first_name + " " + this.state.last_name }
                                                         disabled = { true }
                                                     />
                                                 </FormGroup>
@@ -135,7 +170,6 @@ class CreateProject extends Component {
             </div>
         );
     }
-    
 }
 
 export default withCookies(CreateProject);
