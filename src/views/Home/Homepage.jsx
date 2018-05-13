@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import { Col } from 'react-bootstrap';
 
+// import { auth } from '../../firebase';
 import { instanceOf } from 'prop-types';
 import { Cookies, withCookies} from 'react-cookie';
 
-// import { auth } from '../../firebase';
+import '../../css/homepage.css'
 
+import { Card } from 'components/Card/Card.jsx';
+
+// import labelmeLogo from 'assets/img/LabelMe_logo3.png'
+import cloudmlLogo from 'assets/img/cloudml-logo-blue.png'
 // import GoogleButton from 'react-google-button';
 
 
@@ -50,14 +56,37 @@ class Homepage extends Component {
 
     render() {
         return (
-            <div>
-                <div>
-                    {/* <GoogleButton
-                        type="light"
-                        onClick={ this.handleGoogleSignIn }
-                    /> */}
-                </div>
+            <div className="content">
+                <Col md={3}/>
+                <Col md={6}>
+                    <Card
+                        title={
+                            <img src={ cloudmlLogo } alt="CloudML Logo" className="cloudml-logo"/>
+                            // <p className="cloudml-title">CloudML</p>
+                        }
+                        content={
+                            <div>
+                                <span className="home-desc">Welcome to CloudML! CloudML provides a SaaS that enhances MIT CSAIL's LabelMe open annotation tool.</span>
+                                <br/>
+                                <br/>
+                                {/* <img src={ labelmeLogo } alt="LabelMe Logo" className="labelme-logo"/> */}
+                                <span className="home-desc">Users can create group projects and interact with other members to improve productivity. 
+                                    CloudML's version of the LabelMe tool increases annotation functionality, increasing the effectiveness of training datasets.
+                                    CloudML also allows users to manage and interact directly with the training data repository. </span>
+                            </div>
+                        }
+                    />
+                </Col>
+                <Col md={3}/>
             </div>
+            // <div>
+            //     <div>
+            //         <GoogleButton
+            //             type="light"
+            //             onClick={ this.handleGoogleSignIn }
+            //         />
+            //     </div>
+            // </div>
         );
     }
 }

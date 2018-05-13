@@ -30,7 +30,7 @@ const otherRoutes = [
 ];
 
 const homeRoutes = [
-    { path: "/", name: "Homepage", icon: "pe-7s-graph1", component: Homepage },
+    { path: "/", name: "Home", icon: "pe-7s-home", component: Homepage },
     // { redirect: true, path: "/", to: "/homepage", name: "Homepage" },
 ]
 

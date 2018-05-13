@@ -7,7 +7,8 @@ import { instanceOf } from 'prop-types';
 import { Cookies, withCookies} from 'react-cookie';
 
 import imagine from 'assets/img/sidebar-4.jpg';
-import logo from 'assets/img/reactlogo.png';
+// import logo from 'assets/img/reactlogo.png';
+import cloudmlLogo from 'assets/img/cloudml-logo-white.png'
 
 import { appRoutes } from 'routes/app.jsx';
 
@@ -67,7 +68,7 @@ class Sidebar extends Component{
             <div id="sidebar" className="sidebar" data-color="black" data-image={imagine}>
                 <div className="sidebar-background" style={sidebarBackground}></div>
                     <div className="logo">
-                        <a href="#/dashboard" className="simple-text logo-mini">
+                        {/* <a href="#/dashboard" className="simple-text logo-mini">
                             <div className="logo-img">
                                 <img src={logo} alt="logo_image"/>
                             </div>
@@ -75,7 +76,8 @@ class Sidebar extends Component{
                         </a>
                         <a href="#/dashboard" className="simple-text logo-normal">
                             CloudML
-                        </a>
+                        </a> */}
+                        <img src={ cloudmlLogo } alt="CloudML Logo" className="cloudml-logo"/>
                     </div>
                 <div className="sidebar-wrapper">
                     <ul className="nav">
