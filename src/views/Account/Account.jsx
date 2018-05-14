@@ -28,7 +28,7 @@ class Account extends Component {
             email: '',
             phone_number: '',
             avatar_url: '',
-            configs: [],
+            config: [],
         }
         this.handleChange = this.handleChange.bind(this);        
         this.getUser = this.getUser.bind(this);
@@ -39,7 +39,7 @@ class Account extends Component {
     };
     
     componentWillMount() {
-        this.getUser();
+        // this.getUser();
     }
 
     handleChange(e) {
@@ -49,50 +49,54 @@ class Account extends Component {
     }
 
     getUser() {
-        axios.get(url + '/getuser/' + this.state.token)
-            .then((response) => {
+        axios({
+            url: url + '/users',
+            method: 'get',
+            headers: { Authorization: this.state.token },
+            userRecord: this.state.user,
+        }).then((response) => {
+            if(response.data.success) {
+                this.setState({
+                    first_name: response.data.first_name,
+                    last_name: response.data.last_name,
+                    dob: response.data.dob,
+                    email: response.data.email,
+                    phone_number: response.data.phone_number,
+                    avatar_url: response.data.avatar_url,
+                    configs: response.data.configs,
+                });
+            } else {
+                swal("Error", "", "error");
+            }
+        }).catch((error) => {
+            console.log(error);
+            swal("Network Error", "User could not be fetched.", "error");
+        })
+    }
+
+    handleUpdateProfile(e) {
+        
+        if(this.state.first_name && this.state.last_name && this.state.email && this.state.avatar_url) {
+            axios({
+                url: url + '/users',
+                method: 'patch',
+                headers: { Authorization: this.state.token },
+                data: {
+                    avatarUrl: this.state.avatar_url,
+                    config: this.state.config,
+                },
+                userRecord: this.state.user,
+            }).then((response) => {
                 if(response.data.message === "success") {
-                    this.setState({
-                        first_name: response.data.first_name,
-                        last_name: response.data.last_name,
-                        dob: response.data.dob,
-                        email: response.data.email,
-                        phone_number: response.data.phone_number,
-                        avatar_url: response.data.avatar_url,
-                        configs: response.data.configs,
-                    });
+                    // window.location.reload();
+                    swal("Success", "Your profile has been updated.", "success")
                 } else {
                     swal("Error", "", "error");
                 }
             }).catch((error) => {
                 console.log(error);
-                swal("Network Error", "User could not be fetched.", "error");
+                swal("Network Error", "User could not be updated.", "error");
             })
-    }
-
-    handleUpdateProfile(e) {
-        if(this.state.first_name && this.state.last_name && this.state.email && this.state.avatar_url) {
-            var data = {
-                first_name: this.state.first_name,
-                last_name: this.state.last_name,
-                dob: this.state.dob,
-                email: this.state.email,
-                phone_number: this.state.phone_number,
-                avatar_url: this.state.avatar_url,
-                configs: this.state.configs,
-            }
-            axios.post(url + '/updateuser/' + this.state.token, data)
-                .then((response) => {
-                    if(response.data.message === "success") {
-                        // window.location.reload();
-                        swal("Success", "Your profile has been updated.", "success")
-                    } else {
-                        swal("Error", "", "error");
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                    swal("Network Error", "User could not be updated.", "error");
-                })
         } else {
             swal("Warning", "Please complete name, email, and image fields.", "warning");
         }
@@ -117,6 +121,8 @@ class Account extends Component {
                                                         rows="1" 
                                                         bsClass="form-control" 
                                                         placeholder="First Name" 
+                                                        // defaultValue = ""
+                                                        defaultValue = { this.state.user.displayName.split(" ")[0] } //dummy data
                                                         onChange = { this.handleChange }
                                                     />
                                                 </FormGroup>
@@ -129,7 +135,8 @@ class Account extends Component {
                                                         rows="1" 
                                                         bsClass="form-control" 
                                                         placeholder="Last Name" 
-                                                        defaultValue = ""
+                                                        // defaultValue = ""
+                                                        defaultValue = { this.state.user.displayName.split(" ")[1] } //dummy data
                                                         onChange = { this.handleChange }
                                                 />
                                                 </FormGroup>
@@ -142,7 +149,8 @@ class Account extends Component {
                                                 rows="1" 
                                                 bsClass="form-control" 
                                                 placeholder="Email Address" 
-                                                defaultValue = ""
+                                                // defaultValue = ""
+                                                defaultValue = { this.state.user.email } //dummy data
                                                 onChange = { this.handleChange }
                                             />
                                         </FormGroup>
@@ -175,7 +183,8 @@ class Account extends Component {
                                                 rows="1" 
                                                 bsClass="form-control" 
                                                 placeholder="Image" 
-                                                defaultValue = ""
+                                                // defaultValue = ""
+                                                defaultValue = { this.state.user.photoURL } //dummy data
                                                 onChange = { this.handleChange }
                                             />
                                         </FormGroup>
@@ -198,13 +207,18 @@ class Account extends Component {
                             <UserCard
                                 bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
                                 avatar={this.state.user.photoURL}
-                                name={this.state.first_name + " " + this.state.last_name}
-                                userName={this.state.email}
+                                // name={this.state.first_name + " " + this.state.last_name}
+                                // userName={this.state.email}
+                                name={this.state.user.displayName} //dummy data
+                                userName={this.state.user.email} //dummy data
                                 description={
                                     <span>
-                                        <span>Phone: {this.state.phone_number}</span>
+                                        {/* <span>Phone: {this.state.phone_number}</span>
                                         <br/>
-                                        <span>DOB: {this.state.dob}</span>
+                                        <span>DOB: {this.state.dob}</span> */}
+                                        <span>Phone: N/A</span>
+                                        <br/>
+                                        <span>DOB: N/A</span>
                                     </span>
                                 }
                                 socials={

@@ -62,31 +62,29 @@ class HomeSidebar extends Component{
                 this.props.cookies.set('user', this.state.user);
 
                 if(result.additionalUserInfo.isNewUser) {
-                    var profile = result.additionalUserInfo.profile;
-                    var data = {
-                        first_name: profile.given_name,
-                        last_name: profile.family_name,
-                        dob: "",
-                        email: profile.email,
-                        phone_number: 0,
-                        avatar_url: profile.picture,
-                        configs: {
-                        
-                        }
-                    }
-                    
-                    // axios.post(url + '/createuser/' + result.credential.accessToken, data)
-                    //     .then((response) => {
-                    //         if(response.data.message === "success") {
+                    axios({
+                        url: url + '/users',
+                        method: 'post',
+                        headers: { Authorization: result.credential.accessToken },
+                        data: {
+                            first_name: result.additionalUserInfo.profile.given_name,
+                            last_name: result.additionalUserInfo.profile.family_name,
+                            dob: "",
+                            config: { },
+                        },
+                        userRecord: result.user,
+                    }).then((response) => {
+                            if(response.data.success) {
+                                console.log('success')
                                 window.location = "#/dashboard";
                                 window.location.reload();
-                        //     } else {
-                        //         swal("Error", "", "error");
-                        //     }
-                        // }).catch((error) => {
-                        //     console.log(error);
-                        //     swal("Network Error", "User could not be created.", "error");
-                        // })
+                            } else {
+                                swal("Error", "", "error");
+                            }
+                        }).catch((error) => {
+                            console.log(error);
+                            swal("Network Error", "User could not be created.", "error");
+                        })
                 } else {
                     window.location = "#/dashboard";
                     window.location.reload();

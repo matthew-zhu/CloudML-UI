@@ -57,12 +57,15 @@ class ProjectWorkspace extends Component {
         this.getMembers = this.getMembers.bind(this);
         this.displayDirectory = this.displayDirectory.bind(this);
         this.handleClickFolder = this.handleClickFolder.bind(this);
+        this.handleClickFile = this.handleClickFile.bind(this);
         this.handleClickDropdown = this.handleClickDropdown.bind(this);
         this.handleOpenJSON = this.handleOpenJSON.bind(this);
         this.handleOpenLabelMe = this.handleOpenLabelMe.bind(this);
+        this.deleteFile = this.deleteFile.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdateProject = this.handleUpdateProject.bind(this);
         this.handleLeaveProject = this.handleLeaveProject.bind(this);
+        this.handleRemoveMember = this.handleRemoveMember.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
@@ -70,7 +73,7 @@ class ProjectWorkspace extends Component {
 
     componentWillMount() {
         // this.getUser();
-        // this.getProject();
+        this.getProject();
     }
 
     getUser() {
@@ -103,21 +106,21 @@ class ProjectWorkspace extends Component {
             projNumAnnotations: projData[this.state.projID-1][4],
         })
 
-        axios.get(url + '/getproject/:id')
-            .then((response) => {
-                if(response.data.message === "success"){
-                    this.setState({
-                        project_id: response.data.project_id,
-                        project_name: response.data.project_name,
-                        project_desc: response.data.project_desc,
-                        project_url: response.data.project_url,
-                        permission: response.data.permission,
-                        owner_name: response.data.owner_name,
-                        folders: response.data.folders,
-                        files: response.data.files,
-                    })
-                }
-            })
+        // axios.get(url + '/getproject/:id')
+        //     .then((response) => {
+        //         if(response.data.message === "success"){
+        //             this.setState({
+        //                 project_id: response.data.project_id,
+        //                 project_name: response.data.project_name,
+        //                 project_desc: response.data.project_desc,
+        //                 project_url: response.data.project_url,
+        //                 permission: response.data.permission,
+        //                 owner_name: response.data.owner_name,
+        //                 folders: response.data.folders,
+        //                 files: response.data.files,
+        //             })
+        //         }
+        //     })
     }
     
     getFolder() {
@@ -134,9 +137,49 @@ class ProjectWorkspace extends Component {
                 title = "Directory"
                 content = {
                     <div className="content">
-                        <Breadcrumb>
-                            Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
-                        </Breadcrumb>
+                        <div>
+                            <Row>
+                                <Col md={11}>
+                                    <Breadcrumb>
+                                        Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
+                                    </Breadcrumb>
+                                </Col>
+                                <Col md={1}>
+                                    {/* <Button 
+                                        bsStyle="primary" 
+                                        className="thumbnail-button" 
+                                        bsSize="small"
+                                        onClick={this.handleCreateFolder}
+                                        >
+                                        Create Folder
+                                    </Button> */}
+                                    <ButtonToolbar className="thumbnail-button">
+                                        <DropdownButton
+                                            bsSize="small"
+                                            title="Create Folder"
+                                            noCaret
+                                            id="dropdown-size-small"
+                                            onClick = { this.handleClickDropdown }
+                                            pullRight
+                                            >
+                                            <MenuItem eventKey="1" disabled>
+                                            <FormGroup controlId="formControlsTextarea">
+                                                <ControlLabel>Folder Name</ControlLabel>
+                                                <FormControl 
+                                                    name="folder_name" 
+                                                    rows="1" 
+                                                    bsClass="form-control" 
+                                                    placeholder="Name of Folder" 
+                                                    bsSize="small"
+                                                    onKeyPress={ this.handleCreateFolder }
+                                                />
+                                            </FormGroup>
+                                            </MenuItem>
+                                        </DropdownButton>
+                                    </ButtonToolbar>
+                                </Col>
+                            </Row>
+                        </div>
                         <Grid fluid>
                             <Row>
                                 <div>
@@ -147,22 +190,34 @@ class ProjectWorkspace extends Component {
                                         <img src={ folderImage } className="tn" alt="folder"/>
                                         <Row>
                                             <Col md={10}>
-                                                <p className="textoverflow thumbnail-title">Initial long text coming  here to test ellipsis</p>
+                                                <p className="textoverflow thumbnail-title">Folder</p>
                                             </Col>
                                             <Col md={2}>
-                                                <Button className="thumbnail-button" bsSize="small"><Glyphicon glyph="folder-open"/></Button>
+                                                <ButtonToolbar className="thumbnail-button">
+                                                    <DropdownButton
+                                                        bsSize="small"
+                                                        title={<Glyphicon glyph="menu-hamburger"/>}
+                                                        noCaret
+                                                        id="dropdown-size-small"
+                                                        onClick = { this.handleClickDropdown }
+                                                        >
+                                                        <MenuItem eventKey="1" onClick = { this.handleClickFolder }>Open Folder</MenuItem>
+                                                        <MenuItem divider />
+                                                        <MenuItem eventKey="2" onClick = { this.deleteFile }><font color="#ff0000">Delete</font></MenuItem>
+                                                    </DropdownButton>
+                                                </ButtonToolbar>
                                     
                                             </Col>
                                         </Row>
                                     </Thumbnail>
                                     <Thumbnail 
                                         className="thumbnail"
-                                        onClick={ this.handleClickFolder }
+                                        onClick={ this.handleClickFile }
                                         >
                                         <img src={ jsonImage } className="tn" alt="file"/>
                                         <Row>
                                             <Col md={10}>
-                                                <p className="textoverflow thumbnail-title">Initial long text coming  here to test ellipsis</p>
+                                                <p className="textoverflow thumbnail-title">File</p>
                                             </Col>
                                             <Col md={2}>
                                                 <ButtonToolbar className="thumbnail-button">
@@ -175,6 +230,8 @@ class ProjectWorkspace extends Component {
                                                         >
                                                         <MenuItem eventKey="1" onClick = { this.handleOpenLabelMe }>Open in LabelMe</MenuItem>
                                                         <MenuItem eventKey="2" onClick = { this.handleOpenJSON }>Open JSON</MenuItem>
+                                                        <MenuItem divider />
+                                                        <MenuItem eventKey="3" onClick = { this.deleteFile }><font color="#ff0000">Delete</font></MenuItem>
                                                     </DropdownButton>
                                                 </ButtonToolbar>
                                             </Col>
@@ -189,21 +246,35 @@ class ProjectWorkspace extends Component {
         )
     }
 
+    handleCreateFolder(e) {
+        e.preventDefault();
+
+        if(e.key === "Enter") {
+            console.log("Pressed Enter")
+        }
+    }
+
     handleClickFolder(e) {
         e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
+
+        console.log("Click")
+    }
+
+    handleClickFile(e) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
 
         console.log("Click")
     }
 
     handleClickDropdown(e) {
         e.preventDefault();
-        e.cancelBubble = true;
         if(e.stopPropagation) e.stopPropagation();
     }
 
     handleOpenJSON(e) {
         e.preventDefault();
-        e.cancelBubble = true;
         if(e.stopPropagation) e.stopPropagation();
 
         window.open("", '_blank').focus();
@@ -211,10 +282,14 @@ class ProjectWorkspace extends Component {
 
     handleOpenLabelMe(e) {
         e.preventDefault();
-        e.cancelBubble = true;
         if(e.stopPropagation) e.stopPropagation();
 
         window.open("http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg", '_blank').focus();
+    }
+
+    deleteFile(e) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
     }
 
     handleChange(e) {
@@ -255,21 +330,37 @@ class ProjectWorkspace extends Component {
         e.preventDefault();
     }
 
+    handleRemoveMember(e) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
+
+        swal({
+            title:"Are you sure?", 
+            text:"You are about to remove a user from this project. Do you want to continue?", 
+            icon:"warning", 
+            buttons: true, 
+            dangerMode: true
+        }).then((willDelete) => {
+
+        });
+    }
+
+
     render() {
-        let Dashboard = null;
+        // let Dashboard = null;
         let Directory = null;
         let Members = null;
         let LabelMe = null;
         let Settings = null;
         
-        Dashboard = (
-            <Card 
-                title = "Dashboard"
-                content = {
-                    <div/>
-                }
-            />
-        );
+        // Dashboard = (
+        //     <Card 
+        //         title = "Dashboard"
+        //         content = {
+        //             <div/>
+        //         }
+        //     />
+        // );
 
         Directory = this.displayDirectory();
 
@@ -293,22 +384,49 @@ class ProjectWorkspace extends Component {
                 content = {
                     <Table striped hover>
                         <thead>
-                        <tr>
-                            {projAttributes.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                            })}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {projData.map((prop, key) => {
-                            return (
-                            <tr key={key}>
-                                {prop.map((prop, key) => {
-                                return <td key={key}>{prop}</td>;
+                            <tr>
+                                {projAttributes.map((prop, key) => {
+                                return <th key={key}>{prop}</th>;
                                 })}
                             </tr>
-                            );
-                        })}
+                        </thead>
+                        <tbody>
+                            {projData.map((prop, key) => {
+                                return (
+                                    <tr key={key}>
+                                        {
+                                            
+                                            prop.map((prop, key) => {
+                                                return (
+                                                    <td key={key}>
+                                                        {prop}
+                                                    </td>
+                                                    
+                                                );
+                                            })
+                                        }
+                                        <td key={5}>
+                                            {/* <ButtonToolbar>
+                                                <DropdownButton
+                                                    bsSize="small"
+                                                    title={<font color="#ff0000"><Glyphicon glyph="remove"/></font>}
+                                                    noCaret
+                                                    id="dropdown-size-small"
+                                                    onClick = { this.handleClickDropdown }
+                                                    pullRight
+                                                    >
+                                                    <MenuItem eventKey="1" onClick = { this.handleRemoveMember }><font color="#ff0000">Remove</font></MenuItem>
+                                                </DropdownButton>
+                                            </ButtonToolbar> */}
+                                            <Button pullRight onClick = { this.handleRemoveMember } >
+                                                <font color="#ff0000"><Glyphicon glyph="remove"/></font>
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                    
+                                );
+                            })}
+                            
                         </tbody>
                     </Table>
                 }
@@ -329,6 +447,7 @@ class ProjectWorkspace extends Component {
                                         rows="1" 
                                         bsClass="form-control" 
                                         placeholder="Name of the project" 
+                                        defaultValue= { this.state.projName } //dummydata
                                         onChange = { this.handleChange }
                                     />
                                 </FormGroup>
@@ -339,7 +458,8 @@ class ProjectWorkspace extends Component {
                                         rows="1" 
                                         bsClass="form-control" 
                                         placeholder="Owner of the project" 
-                                        defaultValue = "Owner"
+                                        // defaultValue = ""
+                                        defaultValue= { this.state.projGroup } //dummydata
                                         disabled = {true}
                                     />
                                 </FormGroup>
@@ -378,14 +498,15 @@ class ProjectWorkspace extends Component {
                 <Col md={6}><p><b>Project:</b> {this.state.projName}</p></Col>
                 <Col md={6}><p><b>Admin:</b> {this.state.projGroup}</p></Col>
                 <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
-                    <Tab eventKey={1} title="Dashboard">
+                    {/* <Tab eventKey={1} title="Dashboard">
                         {Dashboard}
-                    </Tab>
-                    <Tab eventKey={2} title="Directory">
-                        {Directory}
-                    </Tab>
-                    <Tab eventKey={3} title="LabelMe Tool">
+                    </Tab> */}
+
+                    <Tab eventKey={2} title="LabelMe Tool">
                         {LabelMe}
+                    </Tab>
+                    <Tab eventKey={3} title="Directory">
+                        {Directory}
                     </Tab>
                     <Tab eventKey={4} title="Members" >
                         {Members}

@@ -66,7 +66,7 @@ class Homepage extends Component {
                         }
                         content={
                             <div>
-                                <span className="home-desc">Welcome to CloudML! CloudML provides a SaaS that enhances MIT CSAIL's LabelMe open annotation tool.</span>
+                                <span className="home-desc">Welcome to CloudML! CloudML is a cloud machine learning SaaS that enhances MIT CSAIL's LabelMe open annotation tool.</span>
                                 <br/>
                                 <br/>
                                 {/* <img src={ labelmeLogo } alt="LabelMe Logo" className="labelme-logo"/> */}

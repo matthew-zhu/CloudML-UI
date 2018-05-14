@@ -72,8 +72,9 @@ class Projects extends Component {
             })
     }
 
-    joinProject() {
-
+    joinProject(e) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
     }
 
     render() {
@@ -131,9 +132,15 @@ class Projects extends Component {
                             {prop.map((prop, key) => {
                             return <td key={key}>{prop}</td>;
                             })}
+                            <td key={5}>
+                                <Button pullRight onClick = { this.joinProject }>
+                                    Join
+                                </Button>
+                            </td>
                         </tr>
                         );
-                    })}
+                    }
+                    )}
                     </tbody>
                 </Table>
                 }

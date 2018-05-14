@@ -133,7 +133,8 @@ class CreateProject extends Component {
                                                         rows="1" 
                                                         bsClass="form-control" 
                                                         placeholder="Owner of the project" 
-                                                        defaultValue = { this.state.first_name + " " + this.state.last_name }
+                                                        // defaultValue = { this.state.first_name + " " + this.state.last_name }
+                                                        defaultValue = { this.state.user.displayName } //dummy data
                                                         disabled = { true }
                                                     />
                                                 </FormGroup>

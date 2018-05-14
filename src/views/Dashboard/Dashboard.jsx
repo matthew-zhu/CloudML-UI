@@ -44,25 +44,29 @@ class Dashboard extends Component {
     }
 
     getUser() {
-        axios.get(url + '/getuser/' + this.state.token)
-            .then((response) => {
-                if(response.data.message === "success") {
-                    this.setState({
-                        first_name: response.data.first_name,
-                        last_name: response.data.last_name,
-                        dob: response.data.dob,
-                        email: response.data.email,
-                        phone_number: response.data.phone_number,
-                        avatar_url: response.data.avatar_url,
-                        configs: response.data.configs,
-                    });
-                } else {
-                    swal("Error", "", "error");
-                }
-            }).catch((error) => {
-                console.log(error);
-                swal("Network Error", "User could not be fetched.", "error");
-            })
+        axios({
+            url: url + '/users',
+            method: 'get',
+            headers: { Authorization: this.state.token },
+            userRecord: this.state.user,
+        }).then((response) => {
+            if(response.data.success) {
+                this.setState({
+                    first_name: response.data.first_name,
+                    last_name: response.data.last_name,
+                    dob: response.data.dob,
+                    email: response.data.email,
+                    phone_number: response.data.phone_number,
+                    avatar_url: response.data.avatar_url,
+                    configs: response.data.configs,
+                });
+            } else {
+                swal("Error", "", "error");
+            }
+        }).catch((error) => {
+            console.log(error);
+            swal("Network Error", "User could not be fetched.", "error");
+        })
     }
 
     getYourProjects() {
@@ -119,8 +123,10 @@ class Dashboard extends Component {
             <UserCard
                 bgImage="https://ununsplash.imgix.net/photo-1431578500526-4d9613015464?fit=crop&fm=jpg&h=300&q=75&w=400"
                 avatar={this.state.user.photoURL}
-                name={this.state.first_name + " " + this.state.last_name}
-                userName={this.state.email}
+                // name={this.state.first_name + " " + this.state.last_name}
+                // userName={this.state.email}
+                name={this.state.user.displayName} //dummy data
+                userName={this.state.user.email} //dummy data
                 description={
                     <span>
                         <span>Phone: {this.state.phone_number}</span>
