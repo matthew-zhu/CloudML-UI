@@ -34,28 +34,46 @@ class ProjectWorkspace extends Component {
             token: this.props.cookies.get('token') || '',
             user: this.props.cookies.get('user') || '',
 
-            project_id: '',
+            user_id: '',
+            first_name: '',
+            last_name: '',
+            dob: '',
+            email: '',
+            phone_number: '',
+            avatar_url: '',
+            configs: [],
+
+            project_id: props.match.params.value,
             project_name: '',
             project_desc: '',
             project_url: '',
-            owner_name: '',
+            project_owner_id: '',
+
             folders: [],
             files: [],
+
+            current_folder_id: '',
 
             update_project_name: '',
             update_project_desc: '',
 
-            projID: props.match.params.value,
-            projName: '',
-            projGroup: '',
-            projNumImages: '',
-            projNumAnnotations: '',
+            selectedFile: null,
+
+            add_email: '',
+            add_permissions: '',
+
+            // projID: props.match.params.value,
+            // projName: '',
+            // projGroup: '',
+            // projNumImages: '',
+            // projNumAnnotations: '',
         }
         this.getUser = this.getUser.bind(this);
         this.getProject = this.getProject.bind(this);
-        this.getFolder = this.getFolder.bind(this);
+        this.openFolder = this.openFolder.bind(this);
         this.getMembers = this.getMembers.bind(this);
         this.displayDirectory = this.displayDirectory.bind(this);
+        this.handleCreateFolder = this.handleCreateFolder.bind(this);
         this.handleClickFolder = this.handleClickFolder.bind(this);
         this.handleClickFile = this.handleClickFile.bind(this);
         this.handleClickDropdown = this.handleClickDropdown.bind(this);
@@ -66,65 +84,105 @@ class ProjectWorkspace extends Component {
         this.handleUpdateProject = this.handleUpdateProject.bind(this);
         this.handleLeaveProject = this.handleLeaveProject.bind(this);
         this.handleRemoveMember = this.handleRemoveMember.bind(this);
+        this.getProjectOwnerName = this.getProjectOwnerName.bind(this);
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleAddMember = this.handleAddMember.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
     };
 
     componentWillMount() {
-        // this.getUser();
+        this.getUser();
         this.getProject();
     }
 
     getUser() {
-        axios.get(url + '/getuser/' + this.state.token)
-            .then((response) => {
-                if(response.data.message === "success") {
-                    this.setState({
-                        first_name: response.data.first_name,
-                        last_name: response.data.last_name,
-                        dob: response.data.dob,
-                        email: response.data.email,
-                        phone_number: response.data.phone_number,
-                        avatar_url: response.data.avatar_url,
-                        configs: response.data.configs,
-                    });
-                } else {
-                    swal("Error", "", "error");
-                }
-            }).catch((error) => {
-                console.log(error);
-                swal("Network Error", "User could not be fetched.", "error");
-            })
+        axios({
+            url: url + '/users',
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getUser()', response);
+            this.setState({
+                user_id: response.data.id,
+                first_name: response.data.first_name,
+                last_name: response.data.last_name,
+                dob: response.data.dob,
+                email: response.data.email,
+                phone_number: response.data.phone_number,
+                avatar_url: response.data.avatar_url,
+                configs: response.data.configs,
+            });
+        }).catch((error) => {
+            console.log('getUser()', error);
+            swal("Network Error", "User could not be fetched.", "error");
+        })
     }
 
     getProject() {
-        this.setState({
-            projName: projData[this.state.projID-1][1],
-            projGroup: projData[this.state.projID-1][2],
-            projNumImages: projData[this.state.projID-1][3],
-            projNumAnnotations: projData[this.state.projID-1][4],
+        // this.setState({
+        //     projName: projData[this.state.projID-1][1],
+        //     projGroup: projData[this.state.projID-1][2],
+        //     projNumImages: projData[this.state.projID-1][3],
+        //     projNumAnnotations: projData[this.state.projID-1][4],
+        // })
+
+        axios({
+            url: url + '/projects/'+this.state.project_id,
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getProject()', response);
+            this.setState({
+                project_name: response.data.project_name,
+                project_desc: response.data.project_desc,
+                project_url: response.data.project_url,
+                project_owner_id: response.data.project_owner_id,
+                current_folder_id: response.data.project_id,
+                update_project_desc: response.data.project_desc,
+            });
+        }).catch((error) => {
+            console.log('getProject()', error);
+            swal("Network Error", "This project could not be fetched.", "error");
         })
 
-        // axios.get(url + '/getproject/:id')
-        //     .then((response) => {
-        //         if(response.data.message === "success"){
-        //             this.setState({
-        //                 project_id: response.data.project_id,
-        //                 project_name: response.data.project_name,
-        //                 project_desc: response.data.project_desc,
-        //                 project_url: response.data.project_url,
-        //                 permission: response.data.permission,
-        //                 owner_name: response.data.owner_name,
-        //                 folders: response.data.folders,
-        //                 files: response.data.files,
-        //             })
-        //         }
-        //     })
+        //get top level folders
+        axios({
+            url: url + '/folders?project_id=' + this.state.project_id,
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getProject() folders', response);
+            this.setState({
+                folders: response.data,
+            });
+        }).catch((error) => {
+            console.log('getProject() folders', error);
+            swal("Network Error", "This project's folders could not be fetched.", "error");
+        })
+        
+        
     }
     
-    getFolder() {
-
+    openFolder(folder_id) {
+        // axios({
+        //     url: url + '/folders?project_id=' + folder_id,
+        //     method: 'get',
+        //     headers: { UID: this.state.token },
+        // }).then((response) => {
+        //     console.log('getProject()', response);
+        //     this.setState({
+        //         project_name: response.data.project_name,
+        //         project_desc: response.data.project_desc,
+        //         project_url: response.data.project_url,
+        //         project_owner_id: response.data.project_owner_id,
+        //         current_folder_id: response.data.project_id,
+        //     });
+        // }).catch((error) => {
+        //     console.log('getProject()', error);
+        //     swal("Network Error", "This project could not be fetched.", "error");
+        // })
     }
 
     getMembers() {
@@ -132,6 +190,8 @@ class ProjectWorkspace extends Component {
     }
 
     displayDirectory() {
+        let displayFolders = null;
+
         return(
             <Card 
                 title = "Directory"
@@ -139,12 +199,12 @@ class ProjectWorkspace extends Component {
                     <div className="content">
                         <div>
                             <Row>
-                                <Col md={11}>
+                                <Col md={6}>
                                     <Breadcrumb>
                                         Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
                                     </Breadcrumb>
                                 </Col>
-                                <Col md={1}>
+                                <Col md={3}>
                                     {/* <Button 
                                         bsStyle="primary" 
                                         className="thumbnail-button" 
@@ -165,18 +225,46 @@ class ProjectWorkspace extends Component {
                                             <MenuItem eventKey="1" disabled>
                                             <FormGroup controlId="formControlsTextarea">
                                                 <ControlLabel>Folder Name</ControlLabel>
-                                                <FormControl 
-                                                    name="folder_name" 
+                                                {/* <FormControl 
+                                                    name="new_folder_name" 
                                                     rows="1" 
                                                     bsClass="form-control" 
                                                     placeholder="Name of Folder" 
                                                     bsSize="small"
+                                                    onChange= { this.handleChange }
                                                     onKeyPress={ this.handleCreateFolder }
-                                                />
+                                                /> */}
+                                                <FormControl 
+                                                    name="new_folder_name" 
+                                                    bsClass="form-control" 
+                                                    placeholder="Folder Name"
+                                                    onChange = { this.handleChange }
+                                                    // onKeyPress={ this.handleCreateFolder }
+                                                    />
+                                                    <br/>
+                                                <Button 
+                                                    // bsStyle="primary" 
+                                                    className="thumbnail-button" 
+                                                    bsSize="small"
+                                                    onClick={this.handleCreateFolder}
+                                                    pullRight
+                                                    >
+                                                    Create Folder
+                                                </Button>
                                             </FormGroup>
                                             </MenuItem>
                                         </DropdownButton>
                                     </ButtonToolbar>
+                                </Col>
+                                <Col md={3}>
+                                    {/* <Button 
+                                        className="thumbnail-button" 
+                                        bsSize="small"
+                                        onClick={this.handleUploadFile}
+                                        >
+                                        Upload File
+                                    </Button> */}
+                                    <input type="file" onChange={this.fileChangedHandler}/>
                                 </Col>
                             </Row>
                         </div>
@@ -249,9 +337,24 @@ class ProjectWorkspace extends Component {
     handleCreateFolder(e) {
         e.preventDefault();
 
-        if(e.key === "Enter") {
-            console.log("Pressed Enter")
-        }
+
+        console.log(this.state.new_folder_name)
+
+        axios({
+            url: url + '/folders/',
+            method: 'post',
+            headers: { UID: this.state.token },
+            data: {
+                folder_name: this.state.new_folder_name,
+                project_id: '33c7ede1-10cc-46eb-836f-fa3adc35e27a',
+                parent_folder_id: '33c7ede1-10cc-46eb-836f-fa3adc35e27a',
+            }
+        }).then((response) => {
+            console.log('createFolder()', response);
+        }).catch((error) => {
+            console.log('createFolder()', error);
+            swal("Network Error", "This folder cannot be created.", "error");
+        })
     }
 
     handleClickFolder(e) {
@@ -287,6 +390,20 @@ class ProjectWorkspace extends Component {
         window.open("http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg", '_blank').focus();
     }
 
+    handleUploadFile(e) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
+
+    }
+
+    fileChangedHandler(e) {
+        e.preventDefault();
+        const file = e.target.files[0];
+        this.setState({
+            selectedFile: e.target.files[0]
+        })
+    }
+
     deleteFile(e) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
@@ -300,34 +417,57 @@ class ProjectWorkspace extends Component {
 
     handleUpdateProject(e) {
         e.preventDefault();
-
-        console.log("update_project_name: " + this.state.update_project_name);
+        console.log(this.state.project_id)
         console.log("update_project_desc: " + this.state.update_project_desc);
 
-        if(this.state.update_project_name && this.state.update_project_desc) {
-            //post project
-            var data = {
-                'update_project_name': this.state.update_project_name,
-                'update_project_desc': this.state.update_project_desc,
-            }
-            axios.post(url + '/updateproject', data)
-                .then((response) => {
-                    if(response.data.message === "success") {
-                        swal("Success", "This projects has been updated.", "success")
-                    } else {
-                        swal("Error", "", "error");
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                    swal("Network Error", "Project could not be updated.", "error");
+        if(this.state.update_project_desc) {
+            axios({
+                url: url + '/projects/' + this.state.project_id,
+                method: 'patch',
+                headers: { UID: this.state.token },
+                data: {
+                    project_desc: this.state.update_project_desc,
+                }
+            }).then((response) => {
+                console.log('updateProject()', response);
+                swal("Success", "Project has been updated!", "success").then(() => {
+                    window.location.reload();
                 })
+            }).catch((error) => {
+                console.log('updateProject()', error);
+                swal("Network Error", "Project could not be updated.", "error");
+            })
         } else {
-            swal("Warning", "Please complete all fields.", "warning");
+            swal("Warning", "Please enter a description", "warning");
         }
     }
 
     handleLeaveProject(e) {
         e.preventDefault();
+    }
+
+    handleAddMember() {
+        console.log(this.state.add_email)
+        console.log(this.state.add_permissions)
+        // if(this.state.add_email && this.state.add_permissions) {
+        //     axios({
+        //         url: url + '/projects/' + this.state.project_id + '/share',
+        //         method: 'post',
+        //         headers: { UID: this.state.token },
+        //         data: {
+        //             email: this.state.add_email,
+        //             permissions: this.state.add_permissions,
+        //         }
+        //     }).then((response) => {
+        //         console.log('handleAddMember()', response);
+        //         swal("Success", "User has been added to this project.", "success");
+        //     }).catch((error) => {
+        //         console.log('handleAddMember()', error);
+        //         swal("Error", "User could not be added to this project.", "error");
+        //     })
+        // } else {
+        //     swal("Warning", "Please complete all fields", "warning");
+        // }
     }
 
     handleRemoveMember(e) {
@@ -345,12 +485,30 @@ class ProjectWorkspace extends Component {
         });
     }
 
+    getProjectOwnerName(owner_id) {
+        axios({
+            url: url + '/users',
+            method: 'get',
+            headers: { UID: owner_id },
+        }).then((response) => {
+            console.log('getProjectOwnerName()', response);
+            console.log(response.data.first_name + ' ' + response.data.last_name)
+            return (response.data.first_name + ' ' + response.data.last_name);
+        }).catch((error) => {
+            console.log('getProjectOwnerName()', error);
+            return 'Error: null';
+        })
+    }
+
+    
+
 
     render() {
         // let Dashboard = null;
         let Directory = null;
         let Members = null;
-        let LabelMe = null;
+        // let LabelMe = null;
+        let AddMembers = null;
         let Settings = null;
         
         // Dashboard = (
@@ -364,19 +522,19 @@ class ProjectWorkspace extends Component {
 
         Directory = this.displayDirectory();
 
-        LabelMe = (
-            <Card 
-                title = "LabelMe Tool"
-                content = {
-                    <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"
-                        width="100%"
-                        height="100%"
-                        display="initial"
-                        position="relative"
-                        allowFullScreen/>
-                }
-            />
-        );
+        // LabelMe = (
+        //     <Card 
+        //         title = "LabelMe Tool"
+        //         content = {
+        //             <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"
+        //                 width="100%"
+        //                 height="100%"
+        //                 display="initial"
+        //                 position="relative"
+        //                 allowFullScreen/>
+        //         }
+        //     />
+        // );
 
         Members = (
             <Card 
@@ -433,87 +591,144 @@ class ProjectWorkspace extends Component {
             />
         );
 
-        Settings = (
-            <Card
-                title="Update Project"
-                content = {
-                    <form>
-                        <Col md={12}>
-                            <Row>
-                                <FormGroup controlId="formControlsTextarea">
-                                    <ControlLabel>Project Name</ControlLabel>
-                                    <FormControl 
-                                        name="update_project_name" 
-                                        rows="1" 
-                                        bsClass="form-control" 
-                                        placeholder="Name of the project" 
-                                        defaultValue= { this.state.projName } //dummydata
-                                        onChange = { this.handleChange }
-                                    />
-                                </FormGroup>
-                                <FormGroup controlId="formControlsTextarea">
-                                    <ControlLabel>Project Owner</ControlLabel>
-                                    <FormControl 
-                                        name="project_owner" 
-                                        rows="1" 
-                                        bsClass="form-control" 
-                                        placeholder="Owner of the project" 
-                                        // defaultValue = ""
-                                        defaultValue= { this.state.projGroup } //dummydata
-                                        disabled = {true}
-                                    />
-                                </FormGroup>
-                                <FormGroup controlId="formControlsTextarea">
-                                    <ControlLabel>Project Description</ControlLabel>
-                                    <FormControl 
-                                        name="update_project_desc" 
-                                        rows="10" 
-                                        componentClass="textarea" 
-                                        bsClass="form-control" 
-                                        placeholder="Please describe this project." 
-                                        onChange = { this.handleChange }
-                                    />
-                                </FormGroup>
-                            </Row>
-                            <Button
-                            bsStyle="info"
-                            pullRight
-                            fill
-                            type="submit"
-                            onClick={ this.handleUpdateProject }
-                        >
-                            Update Project
-                        </Button>
-                        </Col>
-                        
-                        <div className="clearfix"></div>
-                    </form>
-                }
-            />
-        );
+        if(this.state.user_id === this.state.project_owner_id) {
+            AddMembers = (
+                <Tab eventKey={5} title="Add Members">
+                    <Card
+                        title="Add Member"
+                        content = {
+                            <form>
+                                <Col md={12}>
+                                    <Row>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>User Email</ControlLabel>
+                                            <FormControl 
+                                                name="add_email" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="User Email" 
+                                                defaultValue= { this.state.add_email } 
+                                                // onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Project Owner</ControlLabel>
+                                            <FormControl 
+                                                name="add_permissions" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="User Permissions" 
+                                                // defaultValue = ""
+                                                defaultValue= { this.state.add_permissions } 
+                                            />
+                                        </FormGroup>
+                                    </Row>
+                                    <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={ this.handleAddMember }
+                                >
+                                    Add Member
+                                </Button>
+                                </Col>
+                                
+                                <div className="clearfix"></div>
+                            </form>
+                        }
+                    />
+                </Tab>
+            );
+        }
+
+        if(this.state.user_id === this.state.project_owner_id) {
+            Settings = (
+                <Tab eventKey={6} title="Settings">
+                    <Card
+                        title="Update Project"
+                        content = {
+                            <form>
+                                <Col md={12}>
+                                    <Row>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Project Name</ControlLabel>
+                                            <FormControl 
+                                                name="update_project_name" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Name of the project" 
+                                                defaultValue= { this.state.project_name } 
+                                                // onChange = { this.handleChange }
+                                                disabled = {true}
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Project Owner</ControlLabel>
+                                            <FormControl 
+                                                name="project_owner" 
+                                                rows="1" 
+                                                bsClass="form-control" 
+                                                placeholder="Owner of the project" 
+                                                // defaultValue = ""
+                                                defaultValue= { this.state.project_owner_id } 
+                                                disabled = {true}
+                                            />
+                                        </FormGroup>
+                                        <FormGroup controlId="formControlsTextarea">
+                                            <ControlLabel>Project Description</ControlLabel>
+                                            <FormControl 
+                                                name="update_project_desc" 
+                                                rows="10" 
+                                                componentClass="textarea" 
+                                                bsClass="form-control" 
+                                                placeholder="Please describe this project." 
+                                                defaultValue={this.state.project_desc}
+                                                onChange = { this.handleChange }
+                                            />
+                                        </FormGroup>
+                                    </Row>
+                                    <Button
+                                    bsStyle="info"
+                                    pullRight
+                                    fill
+                                    type="submit"
+                                    onClick={ this.handleUpdateProject }
+                                >
+                                    Update Project
+                                </Button>
+                                </Col>
+                                
+                                <div className="clearfix"></div>
+                            </form>
+                        }
+                    />
+                </Tab>
+            );
+        }
+        
 
         return (
             
             <div className="content">
-                <Col md={6}><p><b>Project:</b> {this.state.projName}</p></Col>
-                <Col md={6}><p><b>Admin:</b> {this.state.projGroup}</p></Col>
-                <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
+                <Col md={6}><p><b>Project:</b> {this.state.project_name}</p></Col>
+                <Col md={6}><p><b>Owner:</b> {this.state.project_owner_id}</p></Col>
+                <Tabs defaultActiveKey={3} id="uncontrolled-tab-example">
                     {/* <Tab eventKey={1} title="Dashboard">
                         {Dashboard}
                     </Tab> */}
 
-                    <Tab eventKey={2} title="LabelMe Tool">
+                    {/* <Tab eventKey={2} title="LabelMe Tool">
                         {LabelMe}
-                    </Tab>
+                    </Tab> */}
                     <Tab eventKey={3} title="Directory">
                         {Directory}
                     </Tab>
                     <Tab eventKey={4} title="Members" >
                         {Members}
                     </Tab>
-                    <Tab eventKey={5} title="Settings">
-                        {Settings}
-                    </Tab>
+                    {AddMembers}
+                    {Settings}
                 </Tabs>
             </div>
         )

@@ -54,41 +54,46 @@ class HomeSidebar extends Component{
         auth.doSignInWithPopup()
             .then(function(result) {
                 console.log(result)
+
                 this.setState({
-                    token: result.credential.accessToken,
+                    token: result.user.uid,
                     user: result.user,
                 })
-                this.props.cookies.set('token', this.state.token);
-                this.props.cookies.set('user', this.state.user);
+                
+                this.props.cookies.set('token', result.user.uid);
+                this.props.cookies.set('user', result.user);
 
-                if(result.additionalUserInfo.isNewUser) {
+                // check if user exists in database
+                axios({
+                    url: url + '/users',
+                    method: 'get',
+                    headers: { UID: result.user.uid },
+                }).then((response) => {
+                    console.log('getUser()', response)
+                    window.location = "#/dashboard";
+                    window.location.reload();
+                }).catch((error) => {
+                    console.log('getUser()', error)
                     axios({
                         url: url + '/users',
                         method: 'post',
-                        headers: { Authorization: result.credential.accessToken },
+                        headers: { UID: result.user.uid },
                         data: {
                             first_name: result.additionalUserInfo.profile.given_name,
                             last_name: result.additionalUserInfo.profile.family_name,
-                            dob: "",
-                            config: { },
+                            email: result.additionalUserInfo.profile.email,
+                            avatar_url: result.additionalUserInfo.profile.picture,
                         },
-                        userRecord: result.user,
                     }).then((response) => {
-                            if(response.data.success) {
-                                console.log('success')
-                                window.location = "#/dashboard";
-                                window.location.reload();
-                            } else {
-                                swal("Error", "", "error");
-                            }
-                        }).catch((error) => {
-                            console.log(error);
-                            swal("Network Error", "User could not be created.", "error");
-                        })
-                } else {
-                    window.location = "#/dashboard";
-                    window.location.reload();
-                }
+                        console.log('createUser()', response)
+                        window.location = "#/dashboard";
+                        window.location.reload(); 
+                    }).catch((error) => {
+                        console.log('createUser()', error);
+                        swal("Network Error", "User could not be created in database.", "error");
+                    })
+                })
+
             }.bind(this))
             .catch(function(error) {
                 this.setState({

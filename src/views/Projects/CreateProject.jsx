@@ -46,25 +46,29 @@ class CreateProject extends Component {
     }
 
     getUser() {
-        axios.get(url + '/getuser/' + this.state.token)
-            .then((response) => {
-                if(response.data.message === "success") {
-                    this.setState({
-                        first_name: response.data.first_name,
-                        last_name: response.data.last_name,
-                        dob: response.data.dob,
-                        email: response.data.email,
-                        phone_number: response.data.phone_number,
-                        avatar_url: response.data.avatar_url,
-                        configs: response.data.configs,
-                    });
-                } else {
-                    swal("Error", "", "error");
-                }
-            }).catch((error) => {
-                console.log(error);
-                swal("Network Error", "User could not be fetched.", "error");
-            })
+        axios({
+            url: url + '/users',
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getUser()', response)
+            if(response.data.id !== null || response.data.id !== '') {
+                this.setState({
+                    first_name: response.data.first_name,
+                    last_name: response.data.last_name,
+                    dob: response.data.dob,
+                    email: response.data.email,
+                    phone_number: response.data.phone_number,
+                    avatar_url: response.data.avatar_url,
+                    configs: response.data.configs,
+                });
+            } else {
+                swal("Error", "User is not in database", "error");
+            }
+        }).catch((error) => {
+            console.log('getUser()', error)
+            swal("Network Error", "User could not be fetched.", "error");
+        })
     }
 
     handleChange(e) {
@@ -81,22 +85,24 @@ class CreateProject extends Component {
 
         if(this.state.project_name && this.state.project_desc) {
             //post project
-            var data = {
-                'project_name': this.state.project_name,
-                'project_desc': this.state.project_desc,
-            }
-            axios.post(url + '/createproject/' + this.state.token, data)
-                .then((response) => {
-                    if(response.data.message === "success") {
-                        //redirect to newly created project page
-                        window.location.href("#/project/" + response.data.id)
-                    } else {
-                        swal("Error", "", "error");
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                    swal("Network Error", "Project could not be created.", "error");
+            axios({
+                url: url + '/projects',
+                method: 'post',
+                headers: { UID: this.state.token },
+                data: {
+                    'project_name': this.state.project_name,
+                    'project_desc': this.state.project_desc,
+                    'project_url': 'http'
+                }
+            }).then((response) => {
+                console.log('createProject()', response)
+                swal("Success", "Project has been created!", "success").then(() => {
+                    window.location.href = "#/project/" + response.data.id;
                 })
+            }).catch((error) => {
+                console.log('createProject()', error.response.data);
+                swal("Network Error", error.response.data.reason, "error");
+            })
         } else {
             swal("Warning", "Please complete all fields.", "warning");
         }

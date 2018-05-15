@@ -13,8 +13,6 @@ import '../../css/projects.css'
 import { Card } from 'components/Card/Card.jsx';
 import Button from 'elements/CustomButton/CustomButton';
 
-import { projAttributes, projData } from "variables/Variables.jsx";
-
 
 class Projects extends Component {
     constructor(props){
@@ -29,52 +27,62 @@ class Projects extends Component {
         }
         this.getAllProjects = this.getAllProjects.bind(this);
         this.getYourProjects = this.getYourProjects.bind(this);
-        this.joinProject = this.joinProject.bind(this);
+        this.handleJoinProject = this.handleJoinProject.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
     };
 
     componentWillMount() {
-        // this.getYourProjects();
-        // this.getAllProjects();
+        this.getYourProjects();
+        this.getAllProjects();
     }
 
     getYourProjects() {
-        axios.get(url + '/getyourprojects/' + this.state.token)
-            .then((response) => {
-                if(response.data.message === "success"){
-                    this.setState({
-                        yourProjects: response.data.yourProjects,
-                    })
-                } else {
-                    swal("Error", "", "error");
-                }
-            }).catch((error) => {
-                console.log(error);
-                swal("Network Error", "Your projects could not be fetched.", "error");
-            })
+        axios({
+            url: url + '/projects',
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getYourProjects()', response);
+            this.setState({
+                yourProjects: response.data,
+            });
+        }).catch((error) => {
+            console.log('getYourProjects()', error);
+            swal("Network Error", "Your projects could not be fetched.", "error");
+        })
     }
 
     getAllProjects() {
-        axios.get(url + '/getallprojects/' + this.state.token)
-            .then((response) => {
-                if(response.data.message === "success"){
-                    this.setState({
-                        allProjects: response.data.allProjects,
-                    })
-                } else {
-                    swal("Error", "", "error");
-                }
-            }).catch((error) => {
-                console.log(error);
-                swal("Network Error", "All projects could not be fetched.", "error");
-            })
+        axios({
+            url: url + '/projects/all',
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('getAllProjects()', response);
+            this.setState({
+                allProjects: response.data,
+            });
+        }).catch((error) => {
+            console.log('getAllProjects()', error);
+            swal("Network Error", "All projects could not be fetched.", "error");
+        })
     }
 
-    joinProject(e) {
+    handleJoinProject(e) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
+
+        swal({
+            title:"Are you sure?", 
+            text:"You are about to join this project. Do you want to continue?", 
+            icon:"info", 
+            buttons: true, 
+            dangerMode: false
+        }).then((willDelete) => {
+
+        });
     }
 
     render() {
@@ -90,23 +98,26 @@ class Projects extends Component {
                 <Table striped hover>
                     <thead>
                     <tr>
-                        {projAttributes.map((prop, key) => {
-                        return <th key={key}>{prop}</th>;
-                        })}
+                        <th key={0}>Project Name</th>
+                        <th key={1}>Description</th>
+                        <th key={2}>Owner</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {projData.map((prop, key) => {
-                        return (
-                        <tr key={key} onClick={() => window.location.href = '#/project/' + (key+1)}>
-                            {prop.map((prop, key) => {
-                            return <td key={key}>{prop}</td>;
-                            })}
-                        </tr>
-                        );
-                    })}
+                        {
+                            this.state.yourProjects.map((prop, key) => {
+                                return (
+                                    <tr key={key} onClick={() => window.location.href = '#/project/' + prop.id}>
+                                        <td key={0}>{prop.project_name}</td>
+                                        <td key={1}>{prop.project_desc}</td>
+                                        {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
+                                        <td key={2}>{prop.project_owner_id}</td>
+                                    </tr>
+                                )
+                            })
+                        }
                     </tbody>
-                </Table>
+                </Table>          
                 }
             />
         );
@@ -120,27 +131,29 @@ class Projects extends Component {
                 <Table striped hover>
                     <thead>
                     <tr>
-                        {projAttributes.map((prop, key) => {
-                        return <th key={key}>{prop}</th>;
-                        })}
+                        <th key={0}>Project Name</th>
+                        <th key={1}>Description</th>
+                        <th key={2}>Owner</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {projData.map((prop, key) => {
-                        return (
-                        <tr key={key} onClick={() => window.location.href = '#/project/' + (key+1)}>
-                            {prop.map((prop, key) => {
-                            return <td key={key}>{prop}</td>;
-                            })}
-                            <td key={5}>
-                                <Button pullRight onClick = { this.joinProject }>
-                                    Join
-                                </Button>
-                            </td>
-                        </tr>
-                        );
-                    }
-                    )}
+                        {
+                            this.state.allProjects.map((prop, key) => {
+                                return (
+                                    <tr key={key} onClick={() => window.location.href = '#/project/' + prop.id}>
+                                        <td key={0}>{prop.project_name}</td>
+                                        <td key={1}>{prop.project_desc}</td>
+                                        {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
+                                        <td key={2}>{prop.project_owner_id}</td>
+                                        <td key={3}>
+                                            <Button pullRight onClick = { this.handleJoinProject } >
+                                                Join
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
                     </tbody>
                 </Table>
                 }

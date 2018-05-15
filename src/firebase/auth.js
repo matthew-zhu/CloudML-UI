@@ -34,3 +34,6 @@ export const doSignInWithRedirect = () =>
 
 export const doGetRedirectResult = () =>
     auth.getRedirectResult();
+
+export const doCurrentUserGetToken = () =>
+    auth.currentUser.getIdToken(true);
