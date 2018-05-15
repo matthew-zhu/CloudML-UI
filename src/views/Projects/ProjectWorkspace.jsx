@@ -48,11 +48,14 @@ class ProjectWorkspace extends Component {
             project_desc: '',
             project_url: '',
             project_owner_id: '',
+            project_owner_name: '',
 
             folders: [],
             files: [],
 
             current_folder_id: '',
+            current_folder_name: '',
+            current_folder_parent_id: '',
 
             update_project_name: '',
             update_project_desc: '',
@@ -87,6 +90,8 @@ class ProjectWorkspace extends Component {
         this.getProjectOwnerName = this.getProjectOwnerName.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleAddMember = this.handleAddMember.bind(this);
+        this.deleteFile = this.deleteFile.bind(this);
+        this.deleteFolder = this.deleteFolder.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
@@ -139,9 +144,24 @@ class ProjectWorkspace extends Component {
                 project_desc: response.data.project_desc,
                 project_url: response.data.project_url,
                 project_owner_id: response.data.project_owner_id,
-                current_folder_id: response.data.project_id,
+                current_folder_id: this.state.project_id,
                 update_project_desc: response.data.project_desc,
             });
+
+            //get owner name
+            axios({
+                url: url + '/users',
+                method: 'get',
+                headers: { UID: response.data.project_owner_id },
+            }).then((response) => {
+                console.log('getOwner()', response);
+                this.setState({
+                    project_owner_name: response.data.first_name + ' ' + response.data.last_name,
+                });
+            }).catch((error) => {
+                console.log('getOwner()', error);
+                swal("Network Error", "User could not be fetched.", "error");
+            })
         }).catch((error) => {
             console.log('getProject()', error);
             swal("Network Error", "This project could not be fetched.", "error");
@@ -149,17 +169,18 @@ class ProjectWorkspace extends Component {
 
         //get top level folders
         axios({
-            url: url + '/folders?project_id=' + this.state.project_id,
+            url: url + '/folders?parent_folder_id=' + this.state.project_id,
             method: 'get',
             headers: { UID: this.state.token },
         }).then((response) => {
-            console.log('getProject() folders', response);
+            console.log('clickFolder() ', response);
             this.setState({
                 folders: response.data,
             });
+            
         }).catch((error) => {
-            console.log('getProject() folders', error);
-            swal("Network Error", "This project's folders could not be fetched.", "error");
+            console.log('clickFolder()', error);
+            swal("Network Error", "This folder could not be opened.", "error");
         })
         
         
@@ -189,8 +210,85 @@ class ProjectWorkspace extends Component {
 
     }
 
+
     displayDirectory() {
         let displayFolders = null;
+        let displayFiles = null;
+
+        displayFolders = (
+            <div> {
+            this.state.folders.map((prop,key) => {
+                return(
+                    <Thumbnail 
+                        className="thumbnail"
+                        onClick={ (e) => this.handleClickFolder(e, prop.id, prop.folder_name, prop.parent_folder_id) }
+                        key={key}
+                        >
+                        <img src={ folderImage } className="tn" alt="folder"/>
+                        <Row>
+                            <Col md={10}>
+                                <p className="textoverflow thumbnail-title">{prop.folder_name}</p>
+                            </Col>
+                            <Col md={2}>
+                                <ButtonToolbar className="thumbnail-button">
+                                    <DropdownButton
+                                        bsSize="small"
+                                        title={<Glyphicon glyph="menu-hamburger"/>}
+                                        noCaret
+                                        id="dropdown-size-small"
+                                        onClick = { this.handleClickDropdown }
+                                        >
+                                        <MenuItem eventKey="1" onClick = { (e) => this.handleClickFolder(e, prop.id, prop.folder_name, prop.parent_folder_id) }>Open Folder</MenuItem>
+                                        <MenuItem divider />
+                                        <MenuItem  eventKey="2" onClick = { (e) => this.deleteFolder(e, prop.id) }><font color="#ff0000">Delete</font></MenuItem>
+                                    </DropdownButton>
+                                </ButtonToolbar>
+                    
+                            </Col>
+                        </Row>
+                    </Thumbnail>
+                )
+            })}
+            </div>
+        );
+    
+        displayFiles = (
+            <div> {
+                this.state.files.map((prop,key) => {
+                    return(
+                        <Thumbnail 
+                            className="thumbnail"
+                            onClick={ (e) => this.handleOpenLabelMe(e, prop.id) }
+                            key={key}
+                            >
+                            {/* <img src={ jsonImage } className="tn" alt="file"/> */}
+                            <img src={ prop.file_url } className="tn" alt="file"/>                            
+                            <Row>
+                                <Col md={10}>
+                                    <p className="textoverflow thumbnail-title">{prop.file_name}</p>
+                                </Col>
+                                <Col md={2}>
+                                    <ButtonToolbar className="thumbnail-button">
+                                        <DropdownButton
+                                            bsSize="small"
+                                            title={<Glyphicon glyph="menu-hamburger"/>}
+                                            noCaret
+                                            id="dropdown-size-small"
+                                            onClick = { this.handleClickDropdown }
+                                            >
+                                            <MenuItem eventKey="1" onClick = { (e) => this.handleOpenLabelMe(e, prop.file_url) }>Open in LabelMe</MenuItem>
+                                            <MenuItem eventKey="2" onClick = { (e) => this.handleOpenJSON(e, prop.annotation_url) }>Open JSON</MenuItem>
+                                            <MenuItem divider />
+                                            <MenuItem eventKey="3" onClick = { (e) => this.deleteFile(e, prop.id) }><font color="#ff0000">Delete</font></MenuItem>
+                                        </DropdownButton>
+                                    </ButtonToolbar>
+                                </Col>
+                            </Row>
+                        </Thumbnail>
+                    )
+                })}
+                </div>
+        );
 
         return(
             <Card 
@@ -201,7 +299,8 @@ class ProjectWorkspace extends Component {
                             <Row>
                                 <Col md={6}>
                                     <Breadcrumb>
-                                        Path: <BreadcrumbItem href="#">root</BreadcrumbItem>
+                                        {/* Path: <BreadcrumbItem href="#">root</BreadcrumbItem> */}
+                                        In folder: <BreadcrumbItem onClick={(e) => this.handleClickFolder(e, this.state.current_folder_parent_id)}>{this.state.current_folder_name}</BreadcrumbItem>
                                     </Breadcrumb>
                                 </Col>
                                 <Col md={3}>
@@ -271,60 +370,8 @@ class ProjectWorkspace extends Component {
                         <Grid fluid>
                             <Row>
                                 <div>
-                                    <Thumbnail 
-                                        className="thumbnail"
-                                        onClick={ this.handleClickFolder }
-                                        >
-                                        <img src={ folderImage } className="tn" alt="folder"/>
-                                        <Row>
-                                            <Col md={10}>
-                                                <p className="textoverflow thumbnail-title">Folder</p>
-                                            </Col>
-                                            <Col md={2}>
-                                                <ButtonToolbar className="thumbnail-button">
-                                                    <DropdownButton
-                                                        bsSize="small"
-                                                        title={<Glyphicon glyph="menu-hamburger"/>}
-                                                        noCaret
-                                                        id="dropdown-size-small"
-                                                        onClick = { this.handleClickDropdown }
-                                                        >
-                                                        <MenuItem eventKey="1" onClick = { this.handleClickFolder }>Open Folder</MenuItem>
-                                                        <MenuItem divider />
-                                                        <MenuItem eventKey="2" onClick = { this.deleteFile }><font color="#ff0000">Delete</font></MenuItem>
-                                                    </DropdownButton>
-                                                </ButtonToolbar>
-                                    
-                                            </Col>
-                                        </Row>
-                                    </Thumbnail>
-                                    <Thumbnail 
-                                        className="thumbnail"
-                                        onClick={ this.handleClickFile }
-                                        >
-                                        <img src={ jsonImage } className="tn" alt="file"/>
-                                        <Row>
-                                            <Col md={10}>
-                                                <p className="textoverflow thumbnail-title">File</p>
-                                            </Col>
-                                            <Col md={2}>
-                                                <ButtonToolbar className="thumbnail-button">
-                                                    <DropdownButton
-                                                        bsSize="small"
-                                                        title={<Glyphicon glyph="menu-hamburger"/>}
-                                                        noCaret
-                                                        id="dropdown-size-small"
-                                                        onClick = { this.handleClickDropdown }
-                                                        >
-                                                        <MenuItem eventKey="1" onClick = { this.handleOpenLabelMe }>Open in LabelMe</MenuItem>
-                                                        <MenuItem eventKey="2" onClick = { this.handleOpenJSON }>Open JSON</MenuItem>
-                                                        <MenuItem divider />
-                                                        <MenuItem eventKey="3" onClick = { this.deleteFile }><font color="#ff0000">Delete</font></MenuItem>
-                                                    </DropdownButton>
-                                                </ButtonToolbar>
-                                            </Col>
-                                        </Row>
-                                    </Thumbnail>
+                                    {displayFolders}
+                                    {displayFiles}
                                 </div>
                             </Row>
                         </Grid>
@@ -337,8 +384,8 @@ class ProjectWorkspace extends Component {
     handleCreateFolder(e) {
         e.preventDefault();
 
-
         console.log(this.state.new_folder_name)
+        console.log(this.state.current_folder_id)
 
         axios({
             url: url + '/folders/',
@@ -346,22 +393,55 @@ class ProjectWorkspace extends Component {
             headers: { UID: this.state.token },
             data: {
                 folder_name: this.state.new_folder_name,
-                project_id: '33c7ede1-10cc-46eb-836f-fa3adc35e27a',
-                parent_folder_id: '33c7ede1-10cc-46eb-836f-fa3adc35e27a',
+                project_id: this.state.project_id,
+                parent_folder_id: this.state.current_folder_id,
             }
         }).then((response) => {
             console.log('createFolder()', response);
+            swal("Success", "Folder has been created!", "success")
         }).catch((error) => {
             console.log('createFolder()', error);
             swal("Network Error", "This folder cannot be created.", "error");
         })
     }
 
-    handleClickFolder(e) {
+    handleClickFolder(e, t_id, t_name, t_parent) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
 
-        console.log("Click")
+        console.log(t_id)
+
+        axios({
+            url: url + '/folders?parent_folder_id=' + t_id,
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('clickFolder() ', response);
+            this.setState({
+                folders: response.data,
+                current_folder_id: t_id,
+                current_folder_name: t_name,
+                current_folder_parent_id: t_parent,
+            });
+        }).catch((error) => {
+            console.log('clickFolder()', error);
+            swal("Network Error", "This folder could not be opened.", "error");
+        })
+
+        axios({
+            url: url + '/files?folder_id=' + t_id,
+            method: 'get',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('clickFolder() for file', response);
+            this.setState({
+                files: response.data,
+            });
+            
+        }).catch((error) => {
+            console.log('clickFolder() for file', error);
+            swal("Network Error", "This folder could not be opened.", "error");
+        })
     }
 
     handleClickFile(e) {
@@ -376,14 +456,14 @@ class ProjectWorkspace extends Component {
         if(e.stopPropagation) e.stopPropagation();
     }
 
-    handleOpenJSON(e) {
+    handleOpenJSON(e, j_url) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
 
-        window.open("", '_blank').focus();
+        window.open(j_url, '_blank').focus();
     }
 
-    handleOpenLabelMe(e) {
+    handleOpenLabelMe(e, l_url) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
 
@@ -404,9 +484,36 @@ class ProjectWorkspace extends Component {
         })
     }
 
-    deleteFile(e) {
+    deleteFile(e, f_id) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
+
+        axios({
+            url: url + '/files/' + f_id,
+            method: 'delete',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('deleteFile() ', response);
+        }).catch((error) => {
+            console.log('deleteFile()', error);
+            swal("Network Error", "This file could not be deleted.", "error");
+        })
+    }
+
+    deleteFolder(e, f_id) {
+        e.preventDefault();
+        if(e.stopPropagation) e.stopPropagation();
+
+        axios({
+            url: url + '/folders/' + f_id,
+            method: 'delete',
+            headers: { UID: this.state.token },
+        }).then((response) => {
+            console.log('deleteFolder() ', response);
+        }).catch((error) => {
+            console.log('deleteFolder()', error);
+            swal("Network Error", "This folder could not be deleted.", "error");
+        })
     }
 
     handleChange(e) {
@@ -712,7 +819,7 @@ class ProjectWorkspace extends Component {
             
             <div className="content">
                 <Col md={6}><p><b>Project:</b> {this.state.project_name}</p></Col>
-                <Col md={6}><p><b>Owner:</b> {this.state.project_owner_id}</p></Col>
+                <Col md={6}><p><b>Owner:</b> {this.state.project_owner_name}</p></Col>
                 <Tabs defaultActiveKey={3} id="uncontrolled-tab-example">
                     {/* <Tab eventKey={1} title="Dashboard">
                         {Dashboard}
