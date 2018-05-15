@@ -92,6 +92,7 @@ class ProjectWorkspace extends Component {
         this.handleAddMember = this.handleAddMember.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
         this.deleteFolder = this.deleteFolder.bind(this);
+        this.fileChangedHandler = this.fileChangedHandler.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
@@ -303,7 +304,7 @@ class ProjectWorkspace extends Component {
                                         In folder: <BreadcrumbItem onClick={(e) => this.handleClickFolder(e, this.state.current_folder_parent_id)}>{this.state.current_folder_name}</BreadcrumbItem>
                                     </Breadcrumb>
                                 </Col>
-                                <Col md={3}>
+                                <Col md={2}>
                                     {/* <Button 
                                         bsStyle="primary" 
                                         className="thumbnail-button" 
@@ -355,15 +356,17 @@ class ProjectWorkspace extends Component {
                                         </DropdownButton>
                                     </ButtonToolbar>
                                 </Col>
-                                <Col md={3}>
-                                    {/* <Button 
+                                <Col md={2}>
+                                    <input type="file" onChange={this.fileChangedHandler}/>
+                                </Col>
+                                <Col md={2}>
+                                    <Button 
                                         className="thumbnail-button" 
                                         bsSize="small"
                                         onClick={this.handleUploadFile}
                                         >
                                         Upload File
-                                    </Button> */}
-                                    <input type="file" onChange={this.fileChangedHandler}/>
+                                    </Button>
                                 </Col>
                             </Row>
                         </div>
@@ -556,25 +559,25 @@ class ProjectWorkspace extends Component {
     handleAddMember() {
         console.log(this.state.add_email)
         console.log(this.state.add_permissions)
-        // if(this.state.add_email && this.state.add_permissions) {
-        //     axios({
-        //         url: url + '/projects/' + this.state.project_id + '/share',
-        //         method: 'post',
-        //         headers: { UID: this.state.token },
-        //         data: {
-        //             email: this.state.add_email,
-        //             permissions: this.state.add_permissions,
-        //         }
-        //     }).then((response) => {
-        //         console.log('handleAddMember()', response);
-        //         swal("Success", "User has been added to this project.", "success");
-        //     }).catch((error) => {
-        //         console.log('handleAddMember()', error);
-        //         swal("Error", "User could not be added to this project.", "error");
-        //     })
-        // } else {
-        //     swal("Warning", "Please complete all fields", "warning");
-        // }
+        if(this.state.add_email && this.state.add_permissions) {
+            axios({
+                url: url + '/projects/' + this.state.project_id + '/share',
+                method: 'post',
+                headers: { UID: this.state.token },
+                data: {
+                    email: this.state.add_email,
+                    permissions: this.state.add_permissions,
+                }
+            }).then((response) => {
+                console.log('handleAddMember()', response);
+                swal("Success", "User has been added to this project.", "success");
+            }).catch((error) => {
+                console.log('handleAddMember()', error);
+                swal("Error", "User could not be added to this project.", "error");
+            })
+        } else {
+            swal("Warning", "Please complete all fields", "warning");
+        }
     }
 
     handleRemoveMember(e) {
@@ -714,19 +717,17 @@ class ProjectWorkspace extends Component {
                                                 rows="1" 
                                                 bsClass="form-control" 
                                                 placeholder="User Email" 
-                                                defaultValue= { this.state.add_email } 
-                                                // onChange = { this.handleChange }
+                                                onChange = { this.handleChange }
                                             />
                                         </FormGroup>
                                         <FormGroup controlId="formControlsTextarea">
-                                            <ControlLabel>Project Owner</ControlLabel>
+                                            <ControlLabel>Permissions</ControlLabel>
                                             <FormControl 
                                                 name="add_permissions" 
                                                 rows="1" 
                                                 bsClass="form-control" 
                                                 placeholder="User Permissions" 
-                                                // defaultValue = ""
-                                                defaultValue= { this.state.add_permissions } 
+                                                onChange = { this.handleChange }
                                             />
                                         </FormGroup>
                                     </Row>
