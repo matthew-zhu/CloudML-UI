@@ -64,21 +64,13 @@ class ProjectWorkspace extends Component {
 
             add_email: '',
             add_permissions: '',
-
-            // projID: props.match.params.value,
-            // projName: '',
-            // projGroup: '',
-            // projNumImages: '',
-            // projNumAnnotations: '',
         }
         this.getUser = this.getUser.bind(this);
         this.getProject = this.getProject.bind(this);
-        this.openFolder = this.openFolder.bind(this);
         this.getMembers = this.getMembers.bind(this);
         this.displayDirectory = this.displayDirectory.bind(this);
         this.handleCreateFolder = this.handleCreateFolder.bind(this);
         this.handleClickFolder = this.handleClickFolder.bind(this);
-        this.handleClickFile = this.handleClickFile.bind(this);
         this.handleClickDropdown = this.handleClickDropdown.bind(this);
         this.handleOpenJSON = this.handleOpenJSON.bind(this);
         this.handleOpenLabelMe = this.handleOpenLabelMe.bind(this);
@@ -93,6 +85,7 @@ class ProjectWorkspace extends Component {
         this.deleteFile = this.deleteFile.bind(this);
         this.deleteFolder = this.deleteFolder.bind(this);
         this.fileChangedHandler = this.fileChangedHandler.bind(this);
+        this.handleDeleteProject = this.handleDeleteProject.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
@@ -127,12 +120,6 @@ class ProjectWorkspace extends Component {
     }
 
     getProject() {
-        // this.setState({
-        //     projName: projData[this.state.projID-1][1],
-        //     projGroup: projData[this.state.projID-1][2],
-        //     projNumImages: projData[this.state.projID-1][3],
-        //     projNumAnnotations: projData[this.state.projID-1][4],
-        // })
 
         axios({
             url: url + '/projects/'+this.state.project_id,
@@ -185,26 +172,6 @@ class ProjectWorkspace extends Component {
         })
         
         
-    }
-    
-    openFolder(folder_id) {
-        // axios({
-        //     url: url + '/folders?project_id=' + folder_id,
-        //     method: 'get',
-        //     headers: { UID: this.state.token },
-        // }).then((response) => {
-        //     console.log('getProject()', response);
-        //     this.setState({
-        //         project_name: response.data.project_name,
-        //         project_desc: response.data.project_desc,
-        //         project_url: response.data.project_url,
-        //         project_owner_id: response.data.project_owner_id,
-        //         current_folder_id: response.data.project_id,
-        //     });
-        // }).catch((error) => {
-        //     console.log('getProject()', error);
-        //     swal("Network Error", "This project could not be fetched.", "error");
-        // })
     }
 
     getMembers() {
@@ -360,13 +327,55 @@ class ProjectWorkspace extends Component {
                                     <input type="file" onChange={this.fileChangedHandler}/>
                                 </Col>
                                 <Col md={2}>
-                                    <Button 
+                                    {/* <Button 
                                         className="thumbnail-button" 
                                         bsSize="small"
                                         onClick={this.handleUploadFile}
                                         >
                                         Upload File
-                                    </Button>
+                                    </Button> */}
+                                    <ButtonToolbar className="thumbnail-button">
+                                        <DropdownButton
+                                            bsSize="small"
+                                            title="Upload File"
+                                            noCaret
+                                            id="dropdown-size-small"
+                                            onClick = { this.handleClickDropdown }
+                                            pullRight
+                                            >
+                                            <MenuItem eventKey="1" disabled>
+                                            <FormGroup controlId="formControlsTextarea">
+                                                <ControlLabel>File Name</ControlLabel>
+                                                {/* <FormControl 
+                                                    name="new_folder_name" 
+                                                    rows="1" 
+                                                    bsClass="form-control" 
+                                                    placeholder="Name of Folder" 
+                                                    bsSize="small"
+                                                    onChange= { this.handleChange }
+                                                    onKeyPress={ this.handleCreateFolder }
+                                                /> */}
+                                                <FormControl 
+                                                    name="new_file_name" 
+                                                    bsClass="form-control" 
+                                                    placeholder="File Name"
+                                                    onChange = { this.handleChange }
+                                                    // onKeyPress={ this.handleCreateFolder }
+                                                    />
+                                                    <br/>
+                                                <Button 
+                                                    // bsStyle="primary" 
+                                                    className="thumbnail-button" 
+                                                    bsSize="small"
+                                                    onClick={this.handleUploadFile}
+                                                    pullRight
+                                                    >
+                                                    Upload File
+                                                </Button>
+                                            </FormGroup>
+                                            </MenuItem>
+                                        </DropdownButton>
+                                    </ButtonToolbar>
                                 </Col>
                             </Row>
                         </div>
@@ -401,7 +410,9 @@ class ProjectWorkspace extends Component {
             }
         }).then((response) => {
             console.log('createFolder()', response);
-            swal("Success", "Folder has been created!", "success")
+            swal("Success", "Folder has been created!", "success").then(() => {
+                window.location.reload();
+            })
         }).catch((error) => {
             console.log('createFolder()', error);
             swal("Network Error", "This folder cannot be created.", "error");
@@ -447,13 +458,6 @@ class ProjectWorkspace extends Component {
         })
     }
 
-    handleClickFile(e) {
-        e.preventDefault();
-        if(e.stopPropagation) e.stopPropagation();
-
-        console.log("Click")
-    }
-
     handleClickDropdown(e) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
@@ -477,6 +481,31 @@ class ProjectWorkspace extends Component {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
 
+        console.log(this.state.new_file_name);
+        console.log(this.state.selectedFile);
+
+        if(this.state.new_file_name && this.state.selectedFile) {
+            axios({
+                url: url + '/files',
+                method: 'post',
+                headers: { UID: this.state.token },
+                data: {
+                    file_name: this.state.new_file_name,
+                    file_url: '',
+                    folder_id: this.state.current_folder_id,
+                    annotation_url: '',
+                }
+            }).then((response) => {
+                console.log('uploadFile() ', response);
+                
+            }).catch((error) => {
+                console.log('uploadFile()', error);
+                swal("Network Error", "This file could not be uploaded.", "error");
+            })
+
+            
+        }
+
     }
 
     fileChangedHandler(e) {
@@ -490,33 +519,54 @@ class ProjectWorkspace extends Component {
     deleteFile(e, f_id) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
-
-        axios({
-            url: url + '/files/' + f_id,
-            method: 'delete',
-            headers: { UID: this.state.token },
-        }).then((response) => {
-            console.log('deleteFile() ', response);
-        }).catch((error) => {
-            console.log('deleteFile()', error);
-            swal("Network Error", "This file could not be deleted.", "error");
-        })
+        swal({
+            title:"Are you sure?", 
+            text:"You are about to delete a folder from this project. Do you want to continue?", 
+            icon:"warning", 
+            buttons: true, 
+            dangerMode: true
+        }).then((willDelete) => {
+            if(willDelete)
+                axios({
+                    url: url + '/files/' + f_id,
+                    method: 'delete',
+                    headers: { UID: this.state.token },
+                }).then((response) => {
+                    console.log('deleteFile() ', response);
+                    window.location.reload();
+                }).catch((error) => {
+                    console.log('deleteFile()', error);
+                    swal("Network Error", "This file could not be deleted.", "error");
+                })
+            
+        });
     }
 
     deleteFolder(e, f_id) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
 
-        axios({
-            url: url + '/folders/' + f_id,
-            method: 'delete',
-            headers: { UID: this.state.token },
-        }).then((response) => {
-            console.log('deleteFolder() ', response);
-        }).catch((error) => {
-            console.log('deleteFolder()', error);
-            swal("Network Error", "This folder could not be deleted.", "error");
-        })
+        swal({
+            title:"Are you sure?", 
+            text:"You are about to delete a folder from this project. Do you want to continue?", 
+            icon:"warning", 
+            buttons: true, 
+            dangerMode: true
+        }).then((willDelete) => {
+            if(willDelete) {
+                axios({
+                    url: url + '/folders/' + f_id,
+                    method: 'delete',
+                    headers: { UID: this.state.token },
+                }).then((response) => {
+                    console.log('deleteFolder() ', response);
+                    window.location.reload();
+                }).catch((error) => {
+                    console.log('deleteFolder()', error);
+                    swal("Network Error", "This folder could not be deleted.", "error");
+                })
+            }
+        });
     }
 
     handleChange(e) {
@@ -550,6 +600,46 @@ class ProjectWorkspace extends Component {
         } else {
             swal("Warning", "Please enter a description", "warning");
         }
+    }
+
+    handleDeleteProject(e) {
+        e.preventDefault();
+
+        swal({
+            title:"Are you sure?", 
+            text:"You are about to DELETE this project and ALL its data. Do you want to continue?", 
+            icon:"warning", 
+            buttons: true, 
+            dangerMode: true
+        }).then((willDelete) => {
+            if(willDelete) {
+                swal({
+                    title:"Are you ABSOLUTELY sure?", 
+                    text:"You are about to DELETE this project and ALL its data. Do you want to continue?", 
+                    icon:"warning", 
+                    buttons: true, 
+                    dangerMode: true
+                }).then((willDelete) => {
+                    if(willDelete) {
+                        axios({
+                            url: url + '/projects/' + this.state.project_id,
+                            method: 'delete',
+                            headers: { UID: this.state.token },
+                        }).then((response) => {
+                            console.log('deleteProject()', response);
+                            swal("Success", "Project has been deleted!", "success").then(() => {
+                                window.location = '#/dashboard'
+                                window.location.reload();
+                            })
+                        }).catch((error) => {
+                            console.log('deleteProject()', error);
+                            swal("Network Error", "Project could not be deleted.", "error");
+                        })
+                    }
+                });
+            }
+
+        });
     }
 
     handleLeaveProject(e) {
@@ -779,7 +869,7 @@ class ProjectWorkspace extends Component {
                                                 bsClass="form-control" 
                                                 placeholder="Owner of the project" 
                                                 // defaultValue = ""
-                                                defaultValue= { this.state.project_owner_id } 
+                                                value= { this.state.project_owner_name } 
                                                 disabled = {true}
                                             />
                                         </FormGroup>
@@ -796,6 +886,14 @@ class ProjectWorkspace extends Component {
                                             />
                                         </FormGroup>
                                     </Row>
+                                    <Button
+                                    bsStyle="danger"
+                                    fill
+                                    type="submit"
+                                    onClick={ this.handleDeleteProject }
+                                >
+                                    Delete Project
+                                </Button>
                                     <Button
                                     bsStyle="info"
                                     pullRight

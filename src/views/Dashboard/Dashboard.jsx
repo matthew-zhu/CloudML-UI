@@ -151,7 +151,7 @@ class Dashboard extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        <th key={2}>Owner</th>
+                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -162,7 +162,7 @@ class Dashboard extends Component {
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
                                         {/* <td key={2}>{prop.owner_name}</td> */}
-                                        <td key={2}>{prop.project_owner_id}</td>
+                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
                                     </tr>
                                 )
                             })

@@ -100,7 +100,7 @@ class Projects extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        <th key={2}>Owner</th>
+                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -111,7 +111,7 @@ class Projects extends Component {
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
                                         {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
-                                        <td key={2}>{prop.project_owner_id}</td>
+                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
                                     </tr>
                                 )
                             })
@@ -133,7 +133,7 @@ class Projects extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        <th key={2}>Owner</th>
+                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -144,12 +144,12 @@ class Projects extends Component {
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
                                         {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
-                                        <td key={2}>{prop.project_owner_id}</td>
-                                        <td key={3}>
+                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
+                                        {/* <td key={3}>
                                             <Button pullRight onClick = { this.handleJoinProject } >
                                                 Join
                                             </Button>
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 )
                             })
