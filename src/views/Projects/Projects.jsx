@@ -27,7 +27,6 @@ class Projects extends Component {
         }
         this.getAllProjects = this.getAllProjects.bind(this);
         this.getYourProjects = this.getYourProjects.bind(this);
-        this.handleJoinProject = this.handleJoinProject.bind(this);
     }
     static propTypes = {
         cookies: instanceOf(Cookies).isRequired
@@ -70,21 +69,6 @@ class Projects extends Component {
         })
     }
 
-    handleJoinProject(e) {
-        e.preventDefault();
-        if(e.stopPropagation) e.stopPropagation();
-
-        swal({
-            title:"Are you sure?", 
-            text:"You are about to join this project. Do you want to continue?", 
-            icon:"info", 
-            buttons: true, 
-            dangerMode: false
-        }).then((willDelete) => {
-
-        });
-    }
-
     render() {
         let YourProjectsCard = null;
         let AllProjectsCard = null;
@@ -100,7 +84,6 @@ class Projects extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -110,8 +93,6 @@ class Projects extends Component {
                                     <tr key={key} onClick={() => window.location.href = '#/project/' + prop.id}>
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
-                                        {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
-                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
                                     </tr>
                                 )
                             })
@@ -133,7 +114,6 @@ class Projects extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -143,13 +123,6 @@ class Projects extends Component {
                                     <tr key={key} onClick={() => window.location.href = '#/project/' + prop.id}>
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
-                                        {/* <td key={2}>{this.getProjectOwnerName(prop.project_owner_id)}</td> */}
-                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
-                                        {/* <td key={3}>
-                                            <Button pullRight onClick = { this.handleJoinProject } >
-                                                Join
-                                            </Button>
-                                        </td> */}
                                     </tr>
                                 )
                             })

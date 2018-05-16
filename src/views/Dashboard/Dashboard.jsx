@@ -10,7 +10,6 @@ import swal from 'sweetalert'
 
 import { UserCard } from 'components/UserCard/UserCard.jsx';
 import { Card } from 'components/Card/Card.jsx';
-// import Button from 'elements/CustomButton/CustomButton';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -68,43 +67,6 @@ class Dashboard extends Component {
         })
     }
 
-    // getYourProjects() {
-    //     axios({
-    //         url: url + '/projects',
-    //         method: 'get',
-    //         headers: { UID: this.state.token },
-    //     }).then(async (response) => {
-    //         console.log('getYourProjects()', response);
-    //         this.setState({
-    //             yourProjects: response.data,
-    //         })
-    //         for(var iter in this.state.yourProjects) {
-    //             await axios({
-    //                 url: url + '/users',
-    //                 method: 'get',
-    //                 headers: { UID: this.state.yourProjects[iter].project_owner_id },
-    //             }).then((response) => {
-    //                 console.log('getProjectOwnerName()', response);
-    //                 // this.setState({
-    //                 //     // yourProjects: this.state.yourProjects
-    //                 //     ownerNames: this.state.ownerNames.concat([response.data.first_name + ' ' + response.data.last_name])
-    //                 // })
-    //                 // console.log(this.state.ownerNames)
-    //                 // console.log(iter)
-    //                 this.state.yourProjects[iter]['owner_name'] = response.data.first_name + ' ' + response.data.last_name;
-    //                 this.forceUpdate();
-    //             }).catch((error) => {
-    //                 console.log('getProjectOwnerName()', error);
-    //                 return 'Error: null';
-    //             })
-    //         }
-    //         // console.log(this.state.yourProjects)
-    //         // console.log(this.state.ownerNames);
-    //     }).catch((error) => {
-    //         console.log('getYourProjects()', error);
-    //         swal("Network Error", "Your projects could not be fetched.", "error");
-    //     })
-    // }
     getYourProjects() {
         axios({
             url: url + '/projects',
@@ -151,7 +113,6 @@ class Dashboard extends Component {
                     <tr>
                         <th key={0}>Project Name</th>
                         <th key={1}>Description</th>
-                        {/* <th key={2}>Owner</th> */}
                     </tr>
                     </thead>
                     <tbody>
@@ -161,8 +122,6 @@ class Dashboard extends Component {
                                     <tr key={key} onClick={() => window.location.href = '#/project/' + prop.id}>
                                         <td key={0}>{prop.project_name}</td>
                                         <td key={1}>{prop.project_desc}</td>
-                                        {/* <td key={2}>{prop.owner_name}</td> */}
-                                        {/* <td key={2}>{prop.project_owner_id}</td> */}
                                     </tr>
                                 )
                             })
@@ -186,13 +145,6 @@ class Dashboard extends Component {
                         <span>DOB: {this.state.dob}</span>
                     </span>
                 }
-                // socials={
-                //     <div>
-                //         <Button simple><i className="fa fa-facebook-square"></i></Button>
-                //         <Button simple><i className="fa fa-twitter"></i></Button>
-                //         <Button simple><i className="fa fa-google-plus-square"></i></Button>
-                //     </div>
-                // }
             />
         );
 

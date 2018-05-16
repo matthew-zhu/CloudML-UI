@@ -108,9 +108,7 @@ class CreateProject extends Component {
         }
     }
 
-
     render() {
-       
         return (
             <div className="content">
                 <Grid fluid>
@@ -130,7 +128,7 @@ class CreateProject extends Component {
                                                         bsClass="form-control" 
                                                         placeholder="Name of the project" 
                                                         onChange = { this.handleChange }
-                                                    />
+                                                        />
                                                 </FormGroup>
                                                 <FormGroup controlId="formControlsTextarea">
                                                     <ControlLabel>Project Owner</ControlLabel>
@@ -139,10 +137,9 @@ class CreateProject extends Component {
                                                         rows="1" 
                                                         bsClass="form-control" 
                                                         placeholder="Owner of the project" 
-                                                        // defaultValue = { this.state.first_name + " " + this.state.last_name }
-                                                        defaultValue = { this.state.user.displayName } //dummy data
+                                                        defaultValue = { this.state.user.displayName }
                                                         disabled = { true }
-                                                    />
+                                                        />
                                                 </FormGroup>
                                                 <FormGroup controlId="formControlsTextarea">
                                                     <ControlLabel>Project Description</ControlLabel>
@@ -153,18 +150,18 @@ class CreateProject extends Component {
                                                         bsClass="form-control" 
                                                         placeholder="Please describe this project." 
                                                         onChange = { this.handleChange }
-                                                    />
+                                                        />
                                                 </FormGroup>
                                             </Row>
                                             <Button
-                                            bsStyle="info"
-                                            pullRight
-                                            fill
-                                            type="submit"
-                                            onClick={ this.handleCreateProject }
-                                        >
-                                            Create Project
-                                        </Button>
+                                                bsStyle="info"
+                                                pullRight
+                                                fill
+                                                type="submit"
+                                                onClick={ this.handleCreateProject }
+                                                >
+                                                Create Project
+                                            </Button>
                                         </Col>
                                         
                                         <div className="clearfix"></div>

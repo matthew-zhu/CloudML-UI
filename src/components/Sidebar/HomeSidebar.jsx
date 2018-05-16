@@ -12,7 +12,6 @@ import swal from 'sweetalert'
 import { homeRoutes } from 'routes/app.jsx';
 
 import imagine from 'assets/img/sidebar-4.jpg';
-// import logo from 'assets/img/reactlogo.png';
 import GoogleButton from 'react-google-button';
 import cloudmlLogo from 'assets/img/cloudml-logo-white.png'
 
@@ -113,15 +112,6 @@ class HomeSidebar extends Component{
             <div id="sidebar" className="sidebar" data-color="black" data-image={imagine}>
                 <div className="sidebar-background" style={sidebarBackground}></div>
                     <div className="logo">
-                        {/* <a href="/" className="simple-text logo-mini">
-                            <div className="logo-img">
-                                <img src={logo} alt="logo_image"/>
-                            </div>
-
-                        </a>
-                        <a href="/" className="simple-text logo-normal">
-                            CloudML
-                        </a> */}
                         <img src={ cloudmlLogo } alt="CloudML Logo" className="cloudml-logo"/>
                     </div>
                 <div className="sidebar-wrapper">

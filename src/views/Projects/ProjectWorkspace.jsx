@@ -7,7 +7,6 @@ import {
     FormGroup, ControlLabel, FormControl,
     Glyphicon } from "react-bootstrap";
 import Iframe from 'react-iframe';
-// import ReactS3 from 'react-s3';
 
 import { Cookies, withCookies} from 'react-cookie';
 import { instanceOf } from 'prop-types';
@@ -25,15 +24,6 @@ import folderImage from 'assets/img/folder.jpg';
 import jsonImage from 'assets/img/jsonfile.png';
 
 import { projAttributes, projData } from "variables/Variables.jsx";
-
-// const s3config = {
-//     bucketName: 'cmpe281labelmeimagebaseddatarepository',
-//     albumName: 'folder',
-//     region: 'us-west-1c',
-//     accessKeyId: 'AKIAI4VT4C5OSTYFSARQ',
-//     secretAccessKey: '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',
-// }
-
 
 class ProjectWorkspace extends Component {
     constructor(props){
@@ -78,7 +68,6 @@ class ProjectWorkspace extends Component {
         }
         this.getUser = this.getUser.bind(this);
         this.getProject = this.getProject.bind(this);
-        // this.getMembers = this.getMembers.bind(this);
         this.displayDirectory = this.displayDirectory.bind(this);
         this.handleCreateFolder = this.handleCreateFolder.bind(this);
         this.handleClickFolder = this.handleClickFolder.bind(this);
@@ -103,7 +92,6 @@ class ProjectWorkspace extends Component {
     componentWillMount() {
         this.getUser();
         this.getProject();
-        // this.getMembers();
     }
 
     getUser() {
@@ -130,7 +118,6 @@ class ProjectWorkspace extends Component {
     }
 
     getProject() {
-
         axios({
             url: url + '/projects/'+this.state.project_id,
             method: 'get',
@@ -185,23 +172,6 @@ class ProjectWorkspace extends Component {
         
     }
 
-    // getMembers() {
-    //     axios({
-    //         url: url + '' + this.state.project_id,
-    //         method: 'get',
-    //         headers: { UID: this.state.token },
-    //     }).then((response) => {
-    //         console.log('getMembers() ', response);
-    //         this.setState({
-    //             memberList: response.data
-    //         });
-    //     }).catch((error) => {
-    //         console.log('getMembers()', error);
-    //         swal("Network Error", "This folder could not be opened.", "error");
-    //     })
-    // }
-
-
     displayDirectory() {
         let displayFolders = null;
         let displayFiles = null;
@@ -253,7 +223,6 @@ class ProjectWorkspace extends Component {
                             key={key}
                             >
                             <img src={ jsonImage } className="tn" alt="file"/>
-                            {/* <img src={ prop.file_url } className="tn" alt="file"/>                             */}
                             <Row>
                                 <Col md={10}>
                                     <p className="textoverflow thumbnail-title">{prop.file_name}</p>
@@ -290,19 +259,10 @@ class ProjectWorkspace extends Component {
                             <Row>
                                 <Col md={6}>
                                     <Breadcrumb>
-                                        {/* Path: <BreadcrumbItem href="#">root</BreadcrumbItem> */}
                                         In folder: <BreadcrumbItem onClick={(e) => this.handleClickFolder(e, this.state.current_folder_parent_id)}>{this.state.current_folder_name}</BreadcrumbItem>
                                     </Breadcrumb>
                                 </Col>
                                 <Col md={2}>
-                                    {/* <Button 
-                                        bsStyle="primary" 
-                                        className="thumbnail-button" 
-                                        bsSize="small"
-                                        onClick={this.handleCreateFolder}
-                                        >
-                                        Create Folder
-                                    </Button> */}
                                     <ButtonToolbar className="thumbnail-button">
                                         <DropdownButton
                                             bsSize="small"
@@ -315,25 +275,14 @@ class ProjectWorkspace extends Component {
                                             <MenuItem eventKey="1" disabled>
                                             <FormGroup controlId="formControlsTextarea">
                                                 <ControlLabel>Folder Name</ControlLabel>
-                                                {/* <FormControl 
-                                                    name="new_folder_name" 
-                                                    rows="1" 
-                                                    bsClass="form-control" 
-                                                    placeholder="Name of Folder" 
-                                                    bsSize="small"
-                                                    onChange= { this.handleChange }
-                                                    onKeyPress={ this.handleCreateFolder }
-                                                /> */}
                                                 <FormControl 
                                                     name="new_folder_name" 
                                                     bsClass="form-control" 
                                                     placeholder="Folder Name"
                                                     onChange = { this.handleChange }
-                                                    // onKeyPress={ this.handleCreateFolder }
                                                     />
                                                     <br/>
                                                 <Button 
-                                                    // bsStyle="primary" 
                                                     className="thumbnail-button" 
                                                     bsSize="small"
                                                     onClick={this.handleCreateFolder}
@@ -350,13 +299,6 @@ class ProjectWorkspace extends Component {
                                     <input type="file" onChange={this.fileChangedHandler}/>
                                 </Col>
                                 <Col md={2}>
-                                    {/* <Button 
-                                        className="thumbnail-button" 
-                                        bsSize="small"
-                                        onClick={this.handleUploadFile}
-                                        >
-                                        Upload File
-                                    </Button> */}
                                     <ButtonToolbar className="thumbnail-button">
                                         <DropdownButton
                                             bsSize="small"
@@ -369,25 +311,14 @@ class ProjectWorkspace extends Component {
                                             <MenuItem eventKey="1" disabled>
                                             <FormGroup controlId="formControlsTextarea">
                                                 <ControlLabel>File Name</ControlLabel>
-                                                {/* <FormControl 
-                                                    name="new_folder_name" 
-                                                    rows="1" 
-                                                    bsClass="form-control" 
-                                                    placeholder="Name of Folder" 
-                                                    bsSize="small"
-                                                    onChange= { this.handleChange }
-                                                    onKeyPress={ this.handleCreateFolder }
-                                                /> */}
                                                 <FormControl 
                                                     name="new_file_name" 
                                                     bsClass="form-control" 
                                                     placeholder="File Name"
                                                     onChange = { this.handleChange }
-                                                    // onKeyPress={ this.handleCreateFolder }
                                                     />
                                                     <br/>
                                                 <Button 
-                                                    // bsStyle="primary" 
                                                     className="thumbnail-button" 
                                                     bsSize="small"
                                                     onClick={this.handleUploadFile}
@@ -508,17 +439,12 @@ class ProjectWorkspace extends Component {
         console.log(this.state.selectedFile);
 
         if(this.state.new_file_name && this.state.selectedFile) {
-
-            // ReactS3.upload(this.state.selectedFile, s3config)
-            // .then((data) => {
-            //     console.log(data);
                 axios({
                     url: url + '/files',
                     method: 'post',
                     headers: { UID: this.state.token },
                     data: {
                         file_name: this.state.new_file_name,
-                        // file_url: data.location,
                         file_url: '',
                         folder_id: this.state.current_folder_id,
                         annotation_url: '',
@@ -531,10 +457,6 @@ class ProjectWorkspace extends Component {
                     console.log('uploadFile()', error);
                     swal("Network Error", "This file could not be uploaded.", "error");
                 })
-                
-            // })
-            // .catch((err) => console.error(err))
-            
         }
 
     }
@@ -729,44 +651,18 @@ class ProjectWorkspace extends Component {
                     console.log('handleAddMember()', error);
                     swal("Error", "User could not be removed this project.", "error");
                 })
-               
             }
         });
     }
 
 
     render() {
-        // let Dashboard = null;
         let Directory = null;
         let Members = null;
-        // let LabelMe = null;
         let AddMembers = null;
         let Settings = null;
-        
-        // Dashboard = (
-        //     <Card 
-        //         title = "Dashboard"
-        //         content = {
-        //             <div/>
-        //         }
-        //     />
-        // );
 
         Directory = this.displayDirectory();
-
-        // LabelMe = (
-        //     <Card 
-        //         title = "LabelMe Tool"
-        //         content = {
-        //             <Iframe url="http://13.57.29.36/LabelMeAnnotationTool/tool.html?collection=LabelMe&mode=f&folder=example_folder&image=img1.jpg"
-        //                 width="100%"
-        //                 height="100%"
-        //                 display="initial"
-        //                 position="relative"
-        //                 allowFullScreen/>
-        //         }
-        //     />
-        // );
 
         if(this.state.user_id === this.state.project_owner_id) {
             Members = (
@@ -905,7 +801,6 @@ class ProjectWorkspace extends Component {
                                                 bsClass="form-control" 
                                                 placeholder="Name of the project" 
                                                 defaultValue= { this.state.project_name } 
-                                                // onChange = { this.handleChange }
                                                 disabled = {true}
                                             />
                                         </FormGroup>
@@ -916,7 +811,6 @@ class ProjectWorkspace extends Component {
                                                 rows="1" 
                                                 bsClass="form-control" 
                                                 placeholder="Owner of the project" 
-                                                // defaultValue = ""
                                                 value= { this.state.project_owner_name } 
                                                 disabled = {true}
                                             />
@@ -952,7 +846,6 @@ class ProjectWorkspace extends Component {
                                     Update Project
                                 </Button>
                                 </Col>
-                                
                                 <div className="clearfix"></div>
                             </form>
                         }
@@ -968,13 +861,6 @@ class ProjectWorkspace extends Component {
                 <Col md={6}><p><b>Project:</b> {this.state.project_name}</p></Col>
                 <Col md={6}><p><b>Owner:</b> {this.state.project_owner_name}</p></Col>
                 <Tabs defaultActiveKey={3} id="uncontrolled-tab-example">
-                    {/* <Tab eventKey={1} title="Dashboard">
-                        {Dashboard}
-                    </Tab> */}
-
-                    {/* <Tab eventKey={2} title="LabelMe Tool">
-                        {LabelMe}
-                    </Tab> */}
                     <Tab eventKey={3} title="Directory">
                         {Directory}
                     </Tab>

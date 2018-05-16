@@ -72,7 +72,6 @@ class Account extends Component {
     }
 
     handleUpdateProfile(e) {
-        
         if(this.state.first_name && this.state.last_name && this.state.email && this.state.avatar_url) {
             axios({
                 url: url + '/users',
@@ -104,7 +103,6 @@ class Account extends Component {
             <Card
                 title="Update Profile"
                 content={
-                    // <form>
                     <div>
                         <Row>
                             <Col md={6}>
@@ -190,9 +188,7 @@ class Account extends Component {
                             >
                             Update Profile
                         </Button>
-                        
                         <div className="clearfix"></div>
-                    {/* // </form> */}
                     </div>
                 }
             />
@@ -211,16 +207,8 @@ class Account extends Component {
                         <span>DOB: {this.state.dob}</span>
                     </span>
                 }
-                // socials={
-                //     <div>
-                //         <Button simple><i className="fa fa-facebook-square"></i></Button>
-                //         <Button simple><i className="fa fa-twitter"></i></Button>
-                //         <Button simple><i className="fa fa-google-plus-square"></i></Button>
-                //     </div>
-                // }
             />
         );
-
 
         return (
             <div className="content">
