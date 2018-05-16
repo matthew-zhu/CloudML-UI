@@ -79,6 +79,8 @@ class Account extends Component {
                 method: 'patch',
                 headers: { UID: this.state.token },
                 data: {
+                    phone_number: this.state.phone_number,
+                    dob: this.state.dob,
                     avatar_url: this.state.avatar_url,
                 },
             }).then((response) => {

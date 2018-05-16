@@ -7,6 +7,7 @@ import {
     FormGroup, ControlLabel, FormControl,
     Glyphicon } from "react-bootstrap";
 import Iframe from 'react-iframe';
+// import ReactS3 from 'react-s3';
 
 import { Cookies, withCookies} from 'react-cookie';
 import { instanceOf } from 'prop-types';
@@ -24,6 +25,14 @@ import folderImage from 'assets/img/folder.jpg';
 import jsonImage from 'assets/img/jsonfile.png';
 
 import { projAttributes, projData } from "variables/Variables.jsx";
+
+// const s3config = {
+//     bucketName: 'cmpe281labelmeimagebaseddatarepository',
+//     albumName: 'folder',
+//     region: 'us-west-1c',
+//     accessKeyId: 'AKIAI4VT4C5OSTYFSARQ',
+//     secretAccessKey: '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',
+// }
 
 
 class ProjectWorkspace extends Component {
@@ -64,10 +73,12 @@ class ProjectWorkspace extends Component {
 
             add_email: '',
             add_permissions: '',
+
+            memberList: [],
         }
         this.getUser = this.getUser.bind(this);
         this.getProject = this.getProject.bind(this);
-        this.getMembers = this.getMembers.bind(this);
+        // this.getMembers = this.getMembers.bind(this);
         this.displayDirectory = this.displayDirectory.bind(this);
         this.handleCreateFolder = this.handleCreateFolder.bind(this);
         this.handleClickFolder = this.handleClickFolder.bind(this);
@@ -77,9 +88,7 @@ class ProjectWorkspace extends Component {
         this.deleteFile = this.deleteFile.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleUpdateProject = this.handleUpdateProject.bind(this);
-        this.handleLeaveProject = this.handleLeaveProject.bind(this);
         this.handleRemoveMember = this.handleRemoveMember.bind(this);
-        this.getProjectOwnerName = this.getProjectOwnerName.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleAddMember = this.handleAddMember.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
@@ -94,6 +103,7 @@ class ProjectWorkspace extends Component {
     componentWillMount() {
         this.getUser();
         this.getProject();
+        // this.getMembers();
     }
 
     getUser() {
@@ -134,6 +144,7 @@ class ProjectWorkspace extends Component {
                 project_owner_id: response.data.project_owner_id,
                 current_folder_id: this.state.project_id,
                 update_project_desc: response.data.project_desc,
+                memberList: response.data.members,
             });
 
             //get owner name
@@ -174,9 +185,21 @@ class ProjectWorkspace extends Component {
         
     }
 
-    getMembers() {
-
-    }
+    // getMembers() {
+    //     axios({
+    //         url: url + '' + this.state.project_id,
+    //         method: 'get',
+    //         headers: { UID: this.state.token },
+    //     }).then((response) => {
+    //         console.log('getMembers() ', response);
+    //         this.setState({
+    //             memberList: response.data
+    //         });
+    //     }).catch((error) => {
+    //         console.log('getMembers()', error);
+    //         swal("Network Error", "This folder could not be opened.", "error");
+    //     })
+    // }
 
 
     displayDirectory() {
@@ -229,8 +252,8 @@ class ProjectWorkspace extends Component {
                             onClick={ (e) => this.handleOpenLabelMe(e, prop.id) }
                             key={key}
                             >
-                            {/* <img src={ jsonImage } className="tn" alt="file"/> */}
-                            <img src={ prop.file_url } className="tn" alt="file"/>                            
+                            <img src={ jsonImage } className="tn" alt="file"/>
+                            {/* <img src={ prop.file_url } className="tn" alt="file"/>                             */}
                             <Row>
                                 <Col md={10}>
                                     <p className="textoverflow thumbnail-title">{prop.file_name}</p>
@@ -245,7 +268,7 @@ class ProjectWorkspace extends Component {
                                             onClick = { this.handleClickDropdown }
                                             >
                                             <MenuItem eventKey="1" onClick = { (e) => this.handleOpenLabelMe(e, prop.file_url) }>Open in LabelMe</MenuItem>
-                                            <MenuItem eventKey="2" onClick = { (e) => this.handleOpenJSON(e, prop.annotation_url) }>Open JSON</MenuItem>
+                                            <MenuItem eventKey="2" onClick = { (e) => this.handleOpenJSON(e, prop.annotation_url) }>Open Annotation File</MenuItem>
                                             <MenuItem divider />
                                             <MenuItem eventKey="3" onClick = { (e) => this.deleteFile(e, prop.id) }><font color="#ff0000">Delete</font></MenuItem>
                                         </DropdownButton>
@@ -485,24 +508,32 @@ class ProjectWorkspace extends Component {
         console.log(this.state.selectedFile);
 
         if(this.state.new_file_name && this.state.selectedFile) {
-            axios({
-                url: url + '/files',
-                method: 'post',
-                headers: { UID: this.state.token },
-                data: {
-                    file_name: this.state.new_file_name,
-                    file_url: '',
-                    folder_id: this.state.current_folder_id,
-                    annotation_url: '',
-                }
-            }).then((response) => {
-                console.log('uploadFile() ', response);
-                
-            }).catch((error) => {
-                console.log('uploadFile()', error);
-                swal("Network Error", "This file could not be uploaded.", "error");
-            })
 
+            // ReactS3.upload(this.state.selectedFile, s3config)
+            // .then((data) => {
+            //     console.log(data);
+                axios({
+                    url: url + '/files',
+                    method: 'post',
+                    headers: { UID: this.state.token },
+                    data: {
+                        file_name: this.state.new_file_name,
+                        // file_url: data.location,
+                        file_url: '',
+                        folder_id: this.state.current_folder_id,
+                        annotation_url: '',
+                    }
+                }).then((response) => {
+                    console.log('uploadFile() ', response);
+                    window.location.reload();
+                    
+                }).catch((error) => {
+                    console.log('uploadFile()', error);
+                    swal("Network Error", "This file could not be uploaded.", "error");
+                })
+                
+            // })
+            // .catch((err) => console.error(err))
             
         }
 
@@ -642,10 +673,6 @@ class ProjectWorkspace extends Component {
         });
     }
 
-    handleLeaveProject(e) {
-        e.preventDefault();
-    }
-
     handleAddMember() {
         console.log(this.state.add_email)
         console.log(this.state.add_permissions)
@@ -660,7 +687,9 @@ class ProjectWorkspace extends Component {
                 }
             }).then((response) => {
                 console.log('handleAddMember()', response);
-                swal("Success", "User has been added to this project.", "success");
+                swal("Success", "User has been added to this project.", "success").then(() => {
+                    window.location.reload();
+                });
             }).catch((error) => {
                 console.log('handleAddMember()', error);
                 swal("Error", "User could not be added to this project.", "error");
@@ -670,9 +699,11 @@ class ProjectWorkspace extends Component {
         }
     }
 
-    handleRemoveMember(e) {
+    handleRemoveMember(e, d_email) {
         e.preventDefault();
         if(e.stopPropagation) e.stopPropagation();
+
+        console.log(d_email)
 
         swal({
             title:"Are you sure?", 
@@ -681,26 +712,27 @@ class ProjectWorkspace extends Component {
             buttons: true, 
             dangerMode: true
         }).then((willDelete) => {
-
+            if(willDelete) {    
+                axios({
+                    url: url + '/projects/' + this.state.project_id + '/unshare',
+                    method: 'delete',
+                    headers: { UID: this.state.token },
+                    data: {
+                        email: d_email,
+                    }
+                }).then((response) => {
+                    console.log('handleRemoveMember()', response);
+                    swal("Success", "User has been removed from this project.", "success").then(() => {
+                        window.location.reload();
+                    });
+                }).catch((error) => {
+                    console.log('handleAddMember()', error);
+                    swal("Error", "User could not be removed this project.", "error");
+                })
+               
+            }
         });
     }
-
-    getProjectOwnerName(owner_id) {
-        axios({
-            url: url + '/users',
-            method: 'get',
-            headers: { UID: owner_id },
-        }).then((response) => {
-            console.log('getProjectOwnerName()', response);
-            console.log(response.data.first_name + ' ' + response.data.last_name)
-            return (response.data.first_name + ' ' + response.data.last_name);
-        }).catch((error) => {
-            console.log('getProjectOwnerName()', error);
-            return 'Error: null';
-        })
-    }
-
-    
 
 
     render() {
@@ -736,60 +768,76 @@ class ProjectWorkspace extends Component {
         //     />
         // );
 
-        Members = (
-            <Card 
-                title = "Members"
-                content = {
-                    <Table striped hover>
-                        <thead>
-                            <tr>
-                                {projAttributes.map((prop, key) => {
-                                return <th key={key}>{prop}</th>;
-                                })}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {projData.map((prop, key) => {
-                                return (
-                                    <tr key={key}>
-                                        {
-                                            
-                                            prop.map((prop, key) => {
-                                                return (
-                                                    <td key={key}>
-                                                        {prop}
-                                                    </td>
-                                                    
-                                                );
-                                            })
-                                        }
-                                        <td key={5}>
-                                            {/* <ButtonToolbar>
-                                                <DropdownButton
-                                                    bsSize="small"
-                                                    title={<font color="#ff0000"><Glyphicon glyph="remove"/></font>}
-                                                    noCaret
-                                                    id="dropdown-size-small"
-                                                    onClick = { this.handleClickDropdown }
-                                                    pullRight
-                                                    >
-                                                    <MenuItem eventKey="1" onClick = { this.handleRemoveMember }><font color="#ff0000">Remove</font></MenuItem>
-                                                </DropdownButton>
-                                            </ButtonToolbar> */}
-                                            <Button pullRight onClick = { this.handleRemoveMember } >
-                                                <font color="#ff0000"><Glyphicon glyph="remove"/></font>
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                    
-                                );
-                            })}
-                            
-                        </tbody>
-                    </Table>
-                }
-            />
-        );
+        if(this.state.user_id === this.state.project_owner_id) {
+            Members = (
+                <Card 
+                    title = "Members"
+                    content = {
+                        <Table striped hover>
+                            <thead>
+                                <tr>
+                                    <th key={0}>First Name</th>
+                                    <th key={1}>Last Name</th>
+                                    <th key={2}>Email</th>
+                                    <th key={3}>Phone Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    this.state.memberList.map((prop, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <td key={0}>{prop.first_name}</td>
+                                                <td key={1}>{prop.last_name}</td>
+                                                <td key={2}>{prop.email}</td>
+                                                <td key={3}>{prop.phone_number}</td>
+                                                <td key={4}>
+                                                    <Button pullRight onClick = { (e) => this.handleRemoveMember(e, prop.email) } >
+                                                        <font color="#ff0000"><Glyphicon glyph="remove"/></font>
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </Table>
+                    }
+                />
+            );
+        } else {
+            Members = (
+                <Card 
+                    title = "Members"
+                    content = {
+                        <Table striped hover>
+                            <thead>
+                                <tr>
+                                    <th key={0}>First Name</th>
+                                    <th key={1}>Last Name</th>
+                                    <th key={2}>Email</th>
+                                    <th key={3}>Phone Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    this.state.memberList.map((prop, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <td key={0}>{prop.first_name}</td>
+                                                <td key={1}>{prop.last_name}</td>
+                                                <td key={2}>{prop.email}</td>
+                                                <td key={3}>{prop.phone_number}</td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </Table>
+                    }
+                />
+            );
+        }
 
         if(this.state.user_id === this.state.project_owner_id) {
             AddMembers = (

@@ -42,7 +42,7 @@ class CreateProject extends Component {
     };
     
     componentWillMount() {
-        // this.getUser();
+        this.getUser();
     }
 
     getUser() {

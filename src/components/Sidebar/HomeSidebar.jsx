@@ -70,7 +70,7 @@ class HomeSidebar extends Component{
                     headers: { UID: result.user.uid },
                 }).then((response) => {
                     console.log('getUser()', response)
-                    window.location = "#/dashboard";
+                    window.location.href = "/dashboard";
                     window.location.reload();
                 }).catch((error) => {
                     console.log('getUser()', error)
@@ -86,7 +86,7 @@ class HomeSidebar extends Component{
                         },
                     }).then((response) => {
                         console.log('createUser()', response)
-                        window.location = "#/dashboard";
+                        window.location.href = "/dashboard";
                         window.location.reload(); 
                     }).catch((error) => {
                         console.log('createUser()', error);
